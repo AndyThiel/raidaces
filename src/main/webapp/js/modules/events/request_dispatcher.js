@@ -35,9 +35,14 @@ RequestDispatcher.prototype.unregisterRequestHandler = function(requestHandlerTo
 
 RequestDispatcher.prototype.dispatchRequest = function(request) {
 
-	var requestType = request.type;
-	if (this.requestHandler[requestType]) {
-		return this.requestHandler[requestType].dispatch(request);
+	var requestHandler = this.requestHandler[request.type];
+	if (requestHandler) {
+
+		requestHandler.beforeDispatch(request);
+		var response = requestHandler.dispatch(request);
+		requestHandler.afterDispatch(request);
+
+		return response;
 	}
 
 	return false;

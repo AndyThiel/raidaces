@@ -10,9 +10,6 @@
 
 		<script type="text/javascript" src="js/core.js"></script>
 
-		<script type="text/javascript" src="js/modules/events/event_bus.js"></script>
-		<script type="text/javascript" src="js/modules/events/request_dispatcher.js"></script>
-
 		<script type="text/javascript" src="js/module.js"></script>
 
 		<!-- AUDIO -->
@@ -22,7 +19,11 @@
 		<script type="text/javascript" src="js/modules/debug/module_debug.js"></script>
 
 		<!-- EVENTS -->
+		<script type="text/javascript" src="js/modules/events/event_bus.js"></script>
+		<script type="text/javascript" src="js/modules/events/event.js"></script>
+		<script type="text/javascript" src="js/modules/events/gamestate.js"></script>
 		<script type="text/javascript" src="js/modules/events/module_events.js"></script>
+		<script type="text/javascript" src="js/modules/events/request_dispatcher.js"></script>
 
 		<!-- PCG -->
 		<!--script type="text/javascript" src="js/modules/gui/module_gui.js"></script-->
@@ -49,9 +50,9 @@
 		<!-- ENGINE AND GAME -->
 		<script type="text/javascript" src="js/engine.js"></script>
 		<script type="text/javascript" src="js/raidaces/raidaces.js"></script>
-		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
-		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
-		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<script type="text/javascript" src="js/raidaces/gamestate_loading.js"></script>
+		<script type="text/javascript" src="js/raidaces/event_gamestate_changed.js"></script>
+		<script type="text/javascript" src="js/raidaces/event_map_updated.js"></script>
 		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
 		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
 		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
@@ -85,6 +86,22 @@
 
 			var mapCanvas = document.getElementById('mapCanvas');
 			var mapContext = mapCanvas.getContext('2d');
+
+			gameContext.beginPath();
+			gameContext.rect(0, 0, 800, 600);
+			gameContext.fillStyle = "#88BB88";
+			gameContext.fill();
+			gameContext.font = "bold 16px sans-serif";
+			gameContext.fillStyle = "#FFFFFF";
+			gameContext.fillText("Loading", 350, 294);
+
+			mapContext.beginPath();
+			mapContext.rect(0, 0, 128, 128);
+			mapContext.fillStyle = "#88BB88";
+			mapContext.fill();
+			mapContext.font = "bold 10px sans-serif";
+			mapContext.fillStyle = "#FFFFFF";
+			mapContext.fillText("Loading", 42, 62);
 
 			initEngine(gameContext);
 			initGame(gameContext, hiddenContentArea);

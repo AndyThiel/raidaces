@@ -39,15 +39,17 @@ EventBus.prototype.unregisterEventHandler = function(eventHandlerToDelete) {
 
 EventBus.prototype.fireEvent = function(event) {
 
-	var eventType = event.type;
-	if (this.eventHandler[eventType]) {
+	var eventHandler = this.eventHandler[event.type];
+	if (eventHandler) {
 
 		var index;
 		var currentHandler;
-		for (index = 0; index < this.eventHandler[eventType].length; index++) {
-			currentHandler = this.eventHandler[eventType][index];
+		for (index = 0; index < eventHandler.length; index++) {
+			currentHandler = eventHandler[index];
 			if (currentHandler && currentHandler.isEventHandled(event)) {
+				currentHandler.beforeHandleEvent(event);
 				currentHandler.handleEvent(event);
+				currentHandler.afterHandleEvent(event);
 			}
 		}
 	}
