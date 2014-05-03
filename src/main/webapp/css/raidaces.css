@@ -1,0 +1,44 @@
+h1, h2, h3 {
+	font-family: sans-serif;
+	color: #ed4e2e;
+}
+#gameCanvas {
+	float: left;
+}
+
+#mapCanvas {
+	float: left;
+}
+
+#debugArea {
+	float: left;
+	min-height: 600px;
+	margin: 0;
+	padding: 10px;
+	font-family: monospaced;
+}
+
+#hiddenContentArea canvas, #hiddenContentArea img {
+	display: none;
+}
+
+#hiddenContentArea img.visible {
+	display: block;
+}
+
+.clear {
+	clear: both;
+}
+
+div {
+	font-family: sans-serif;
+	color: #999999;
+}
+
+div.button {
+
+}
+
+canvas {
+	border: 1px #ed4e2e solid;
+}

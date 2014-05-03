@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang=en-us manifest="cache.manifest">
+	<head>
+		<meta charset=utf-8>
+		<title>Raid Aces</title>
+		<meta name=description content="The Epic Battles Of The Ancient Clans ... or whatever ...">
+		<meta name=viewport content="width=device-width, initial-scale=1">
+
+		<link rel=stylesheet href="css/raidaces.css">
+
+		<script type="text/javascript" src="js/core.js"></script>
+
+		<script type="text/javascript" src="js/modules/events/event_bus.js"></script>
+		<script type="text/javascript" src="js/modules/events/request_dispatcher.js"></script>
+
+		<script type="text/javascript" src="js/module.js"></script>
+
+		<!-- AUDIO -->
+		<!--script type="text/javascript" src="js/modules/audio/module_audio.js"></script-->
+
+		<!-- DEBUGGING -->
+		<script type="text/javascript" src="js/modules/debug/module_debug.js"></script>
+
+		<!-- EVENTS -->
+		<script type="text/javascript" src="js/modules/events/module_events.js"></script>
+
+		<!-- PCG -->
+		<!--script type="text/javascript" src="js/modules/gui/module_gui.js"></script-->
+		<script type="text/javascript" src="js/modules/pcg/module_pcg.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/creator.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/creator_theme_whitelist.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/creator_theme_whitelist_context.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/map2d.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/creator_map2d.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/creator_map2d_context.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/landscape2d.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/creator_landscape2d.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/creator_landscape2d_context.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/stream_source.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/stream_source_fixed.js"></script>
+		<script type="text/javascript" src="js/modules/pcg/stream_source_random.js"></script>
+
+		<!-- RENDERING -->
+		<script type="text/javascript" src="js/modules/render/module_render.js"></script>
+
+		<!-- SCENE -->
+		<script type="text/javascript" src="js/modules/scene/module_scene.js"></script>
+
+		<!-- ENGINE AND GAME -->
+		<script type="text/javascript" src="js/engine.js"></script>
+		<script type="text/javascript" src="js/raidaces/raidaces.js"></script>
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+		<!--script type="text/javascript" src="js/raidaces/.js"></script-->
+
+	</head>
+	<body>
+		<div class=container>
+			<h1>Raid Aces</h1>
+
+			<canvas id="gameCanvas" width="800" height="600" onClick="toggleRunning(gameContext)"></canvas>
+			<div id="debugArea">The Epic Battles Of The Ancient Clans ... or whatever ...</div>
+			<canvas id="mapCanvas" width="128" height="128"></canvas>
+
+			<div class="clear"></div>
+			<div id="hiddenContentArea"></div>
+
+			<script>
+
+			var gameCanvas = document.getElementById('gameCanvas');
+			var gameContext = gameCanvas.getContext('2d');
+			var hiddenContentArea = document.getElementById('hiddenContentArea');
+
+			var mapCanvas = document.getElementById('mapCanvas');
+			var mapContext = mapCanvas.getContext('2d');
+
+			initEngine(gameContext);
+			initGame(gameContext, hiddenContentArea);
+
+			document.addEventListener('keydown', function(event) {
+				handleInputEvent(event, gameContext);
+			});
+			</script>
+		</div>
+	</body>
+</html>
