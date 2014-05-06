@@ -1,0 +1,72 @@
+Client
+======
+
+	Cleaning up:
+	------------
+
+	Is it enough to populate the scene graph with entities in the loading game state,
+	or do I need to store the whole created map (as opposed to creating a map preview entity for a widget)
+
+	Map creation:
+	-------------
+
+	1.) MOBA arena creation:
+		procedurally establishing bases, lanes, arenas, jungle, blocked and undecided areas
+		procedurally creating transition areas and blocked areas
+		procedurally creating random areas
+		procedurally placing actors
+	2.) Deathmatch arena creation:
+		procedurally establishing bases, arenas, blocked and undecided areas
+		procedurally placing actors
+
+
+	Entity creation:
+	----------------
+
+	1.) Background entities:
+
+	2.) Static and dynamic gameplay entities:
+
+	3.) GUI entities / widgets:
+
+
+	Scene graph rendering:
+	----------------------
+
+	1.) Plain Canvas:
+
+	2.) WebGL / Shaders with normal an depth maps:
+
+	Game logic:
+	-----------
+	
+		Menu:
+	
+		Gameplay MOBA:
+	
+		Gameplay Deathmatch:
+	
+	Music:
+	------
+	
+		Procedural?
+	
+	Sound Effects:
+	--------------
+	
+		What to do, here?
+
+Server
+======
+
+	Project setup:
+	--------------
+
+		Eclipse IDE build process:
+		Continuous Integration build process:
+
+	Features:
+	---------
+
+	Optimization:
+	-------------
