@@ -4,6 +4,9 @@
 function CreatorMap2D() {
 }
 
+var MIRRORMODE_POINT = 0;
+var MIRRORMODE_AXIS = 1;
+
 CreatorMap2D.prototype = Object.create(AbstractCreator.prototype);
 CreatorMap2D.prototype.constructor = CreatorMap2D;
 
@@ -33,9 +36,21 @@ CreatorMap2D.prototype.create = function(streamSource) {
 
 	// this.logArray(map.mapArray);
 
+	var mirrorMode;
+	var mirrorLine;
+
+	if (streamSource.consumeBoolean()) {
+		mirrorMode = MIRRORMODE_AXIS;
+		mirrorLine = streamSource.consumeShort() % 4;
+		log("Mirror line: " + mirrorLine);
+	} else {
+		mirrorMode = MIRRORMODE_POINT;
+		mirrorLine = streamSource.consumeInt() % ((this.width - 1) + (this.height - 1));
+	}
+
 	var indexStep;
-	for (indexStep = 0; indexStep < 3; indexStep++) {
-		this.updateMapArray(map.mapArray);
+	for (indexStep = 0; indexStep < 2; indexStep++) {
+		this.updateMapArray(map.mapArray, mirrorMode, mirrorLine);
 	}
 
 	// this.logArray(map.mapArray);
@@ -43,7 +58,7 @@ CreatorMap2D.prototype.create = function(streamSource) {
 	return map;
 };
 
-CreatorMap2D.prototype.updateMapArray = function(mapArray) {
+CreatorMap2D.prototype.updateMapArray = function(mapArray, mirrorMode, mirrorLine) {
 
 	// Not exactly needed right now, but might come in handy
 	// once the logic gets more complex ...
@@ -63,8 +78,27 @@ CreatorMap2D.prototype.updateMapArray = function(mapArray) {
 
 	var indexY;
 	var indexX;
+	var mirrorIndexX = 0;
+	var mirrorIndexY = 0;
 
+	var maxIndexX = mapArray[0].length - 1;
 	var maxIndexY = mapArray.length - 1;
+
+	var line = new Object();
+	if (mirrorLine > maxIndexY) {
+		var offsetX = mirrorLine - maxIndexY;
+		line.point1X = offsetX;
+		line.point1Y = 0;
+		line.point2X = maxIndexX - offsetX;
+		line.point2Y = maxIndexY;
+	} else {
+		line.point1X = 0;
+		line.point1Y = mirrorLine;
+		line.point2X = maxIndexX;
+		line.point2Y = maxIndexY - mirrorLine;
+	}
+
+	vertical:
 	for (indexY = 0; indexY <= maxIndexY; indexY++) {
 
 		indexTop = indexY - 1;
@@ -75,8 +109,51 @@ CreatorMap2D.prototype.updateMapArray = function(mapArray) {
 			indexBottom = 0;
 		}
 
-		var maxIndexX = mapArray[indexY].length - 1;
+		horizontal:
 		for (indexX = 0; indexX <= maxIndexX; indexX++) {
+
+			if (MIRRORMODE_AXIS == mirrorMode) {
+				if (0 == mirrorLine) {
+					if (indexY > (mapArray.length / 2)) {
+						break;
+					} else {
+						mirrorIndexX = indexX;
+						mirrorIndexY = maxIndexY - indexY;
+					}
+				} else if (1 == mirrorLine) {
+					if (indexX > (mapArray[indexY].length / 2)) {
+						continue vertical;
+					} else {
+						mirrorIndexX = maxIndexX - indexX;
+						mirrorIndexY = indexY;
+					}
+				} else if (2 == mirrorLine) {
+					if (indexX > indexY) {
+						continue vertical;
+					} else {
+						mirrorIndexX = indexY;
+						mirrorIndexY = indexX;
+					}
+				} else if (3 == mirrorLine) {
+					if (indexX > (mapArray.length - indexY)) {
+						continue vertical;
+					} else {
+						mirrorIndexX = maxIndexY - indexY;
+						mirrorIndexY = maxIndexX - indexX;
+					}
+				}
+			} else {
+				if (((line.point1Y <= indexY) || (line.point2Y <= indexY))
+				&& ((line.point1X <= indexX) || (line.point2X <= indexX))) {
+
+					// FIXME: Probably there is a way to determine when we can
+					// continue vertical instead, which would be more efficient.
+					continue horizontal;
+				} else {
+					mirrorIndexX = maxIndexY - indexX;
+					mirrorIndexY = maxIndexX - indexY;
+				}
+			}
 
 			indexLeft = indexX - 1;
 			indexRight = indexX + 1;
@@ -124,10 +201,13 @@ CreatorMap2D.prototype.updateMapArray = function(mapArray) {
 			// Guess I should update a buffer array first and keep using the original for the algorithm.
 			if (4 < countNeighborsTrue) {
 				mapArray[indexY][indexX] = 1;
+				mapArray[mirrorIndexY][mirrorIndexX] = 1;
 			} else if ((3 < countNeighborsTrue) && (1 == mapArray[indexY][indexX])) {
 				mapArray[indexY][indexX] = 1;
+				mapArray[mirrorIndexY][mirrorIndexX] = 1;
 			} else {
 				mapArray[indexY][indexX] = 0;
+				mapArray[mirrorIndexY][mirrorIndexX] = 0;
 			}
 		}
 	}

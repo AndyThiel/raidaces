@@ -88,7 +88,7 @@ GameStateLoading.prototype.init = function() {
 					mapContext.strokeStyle = "#FFFFFF";
 				} else {
 					if (1 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
-						mapContext.strokeStyle = "#CD7F32";
+						mapContext.strokeStyle = "#99CC99";
 					} else {
 						mapContext.strokeStyle = "#88BB88";
 					}
@@ -195,11 +195,34 @@ GameStateLoading.prototype.initHiddenContentArea = function(hiddenContentArea) {
 
 GameStateLoading.prototype.landscapeToImages = function(currentLandscape, tileSize, indexCurrentLandscape) {
 
-	this.renderLandscapeMaps(currentLandscape, tileSize);
+	setTimeout(this.makeRenderExecution(this, currentLandscape, indexCurrentLandscape, tileSize), (indexCurrentLandscape * 200));
 
-	document.getElementById('imgMap' + indexCurrentLandscape).src = document.getElementById('canvasMap').toDataURL();
-	document.getElementById('imgNormalMap' + indexCurrentLandscape).src = document.getElementById('canvasNormalMap').toDataURL();
-	document.getElementById('imgDepthMap' + indexCurrentLandscape).src = document.getElementById('canvasDepthMap').toDataURL();
+//	this.renderLandscapeMaps(currentLandscape, tileSize);
+//
+//	document.getElementById('imgMap' + indexCurrentLandscape).src = document.getElementById('canvasMap').toDataURL();
+//	document.getElementById('imgNormalMap' + indexCurrentLandscape).src = document.getElementById('canvasNormalMap').toDataURL();
+//	document.getElementById('imgDepthMap' + indexCurrentLandscape).src = document.getElementById('canvasDepthMap').toDataURL();
+};
+
+GameStateLoading.prototype.makeRenderExecution = function(gamestate_loading, currentLandscape, indexCurrentLandscape, tileSize) {
+
+	return function() {
+
+		gamestate_loading.renderLandscapeMaps(currentLandscape, tileSize);
+
+//		setTimeout(function() {
+			document.getElementById('imgMap' + indexCurrentLandscape).src = document.getElementById('canvasMap').toDataURL();
+//		}, 10);
+//		setTimeout(function() {
+			document.getElementById('imgNormalMap' + indexCurrentLandscape).src = document.getElementById('canvasNormalMap').toDataURL();
+//		}, 10);
+//		setTimeout(function() {
+			document.getElementById('imgDepthMap' + indexCurrentLandscape).src = document.getElementById('canvasDepthMap').toDataURL();
+//		}, 10);
+
+		// eventBus
+		//		.fireEvent(new EventGameStateChanged(oldGameState, newGameState));
+	};
 };
 
 GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape, tileSize) {
@@ -221,20 +244,37 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape, tile
 			var posX = indexX * tileSize;
 			if (landscapeArray[indexY][indexX]) {
 
-				contextMap.beginPath();
-				contextMap.rect(posX, posY, 64, 64);
-				contextMap.strokeStyle = "#C19A6B";
-				contextMap.stroke();
-				contextMap.fillStyle = "#CD7F32";
-				contextMap.fill();
+				if ((indexY < landscapeArray.length - 1) && !landscapeArray[indexY + 1][indexX]) {
+
+					contextMap.beginPath();
+					contextMap.rect(posX, posY, 64, 40);
+					contextMap.strokeStyle = "#99CC99";
+					contextMap.stroke();
+					contextMap.fillStyle = "#88BB88";
+					contextMap.fill();
+	
+					contextMap.beginPath();
+					contextMap.rect(posX, posY + 40, 64, 24);
+					contextMap.strokeStyle = "#C19A6B";
+					contextMap.stroke();
+					contextMap.fillStyle = "#CD7F32";
+					contextMap.fill();
+				} else {
+					contextMap.beginPath();
+					contextMap.rect(posX, posY, 64, 64);
+					contextMap.strokeStyle = "#99CC99";
+					contextMap.stroke();
+					contextMap.fillStyle = "#88BB88";
+					contextMap.fill();
+				}
 
 			} else {
 
 				contextMap.beginPath();
 				contextMap.rect(posX, posY, 64, 64);
-				contextMap.strokeStyle = "#99CC99";
+				contextMap.strokeStyle = "#88BB88";
 				contextMap.stroke();
-				contextMap.fillStyle = "#88BB88";
+				contextMap.fillStyle = "#77AA77";
 				contextMap.fill();
 			}
 		}
@@ -252,7 +292,15 @@ GameStateLoading.prototype.landscapeToEntity = function(currentLandscape, tileSi
 };
 
 function updateMap(gameContext) {
-	var centerImage = document.getElementById("imgMap12");
-	gameContext.drawImage(centerImage, 112.0, 212.0, 800.0, 600.0, 0.0, 0.0, 800.0, 600.0);
-	engine.eventBus.fireEvent(new EventMapUpdated());
+	setTimeout(makeUpdateExecution(), 10);
 }
+
+function makeUpdateExecution() {
+
+	return function() {
+
+		var centerImage = document.getElementById("imgMap12");
+		gameContext.drawImage(centerImage, 112.0, 212.0, 800.0, 600.0, 0.0, 0.0, 800.0, 600.0);
+		engine.eventBus.fireEvent(new EventMapUpdated());
+	};
+};

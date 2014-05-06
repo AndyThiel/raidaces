@@ -24,7 +24,7 @@ ModuleEvents.prototype.changeGameState = function(moduleGameState) {
 	var callbackFunction = this.makeCallbackExecution(oldGameState,
 			this.gameState, this.eventBus);
 
-	setTimeout(callbackFunction, 10);
+	setTimeout(callbackFunction, 100);
 };
 
 ModuleEvents.prototype.makeCallbackExecution = function(oldGameState,
