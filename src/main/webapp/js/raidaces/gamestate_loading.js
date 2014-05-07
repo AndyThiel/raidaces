@@ -13,7 +13,7 @@ function GameStateLoading(gamestateEngine) {
 	this.creatorLandscape;
 
 	this.creatorThemeWhitelistContext = new CreatorThemeWhitelistContext();
-	this.creatorMapContext = new CreatorMap2DContext();
+	this.creatorMapContext = new CreatorMapMobaContext();
 	this.creatorLandscapeContext = new CreatorLandscape2DContext();
 }
 
@@ -46,7 +46,7 @@ GameStateLoading.prototype.init = function() {
 	// Request creators for procedural generation
 	this.creatorThemeWhitelist = pcgModule.getCreatorThemeWhitelist();
 	log("whitelist creator requested");
-	this.creatorMap = pcgModule.getCreatorMap2D();
+	this.creatorMap = new CreatorMapMoba();
 	log("map creator requested");
 	this.creatorLandscape = pcgModule.getCreatorLandscape2D();
 	log("landscape creator requested");
@@ -87,10 +87,16 @@ GameStateLoading.prototype.init = function() {
 					|| (indexMapX >= 56 && indexMapX <= 72 && (56 == indexMapY || 72 == indexMapY))) {
 					mapContext.strokeStyle = "#FFFFFF";
 				} else {
-					if (1 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
-						mapContext.strokeStyle = "#99CC99";
-					} else {
+					if (0 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
+						mapContext.strokeStyle = "#669966";
+					} else if (1 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]){
+						mapContext.strokeStyle = "#77AA77";
+					} else if (2 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]){
 						mapContext.strokeStyle = "#88BB88";
+					} else if (3 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]){
+						mapContext.strokeStyle = "#99CC99";
+					} else if (4 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]){
+						mapContext.strokeStyle = "#AADDAA";
 					}
 				}
 				mapContext.stroke();
@@ -242,41 +248,52 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape, tile
 
 			var posY = indexY * tileSize;
 			var posX = indexX * tileSize;
-			if (landscapeArray[indexY][indexX]) {
-
-				if ((indexY < landscapeArray.length - 1) && !landscapeArray[indexY + 1][indexX]) {
-
-					contextMap.beginPath();
-					contextMap.rect(posX, posY, 64, 40);
-					contextMap.strokeStyle = "#99CC99";
-					contextMap.stroke();
-					contextMap.fillStyle = "#88BB88";
-					contextMap.fill();
-	
-					contextMap.beginPath();
-					contextMap.rect(posX, posY + 40, 64, 24);
-					contextMap.strokeStyle = "#C19A6B";
-					contextMap.stroke();
-					contextMap.fillStyle = "#CD7F32";
-					contextMap.fill();
-				} else {
-					contextMap.beginPath();
-					contextMap.rect(posX, posY, 64, 64);
-					contextMap.strokeStyle = "#99CC99";
-					contextMap.stroke();
-					contextMap.fillStyle = "#88BB88";
-					contextMap.fill();
-				}
-
-			} else {
+//			if (landscapeArray[indexY][indexX]) {
+//
+//				if ((indexY < landscapeArray.length - 1) && !landscapeArray[indexY + 1][indexX]) {
+//
+//					contextMap.beginPath();
+//					contextMap.rect(posX, posY, 64, 40);
+//					contextMap.strokeStyle = "#99CC99";
+//					contextMap.stroke();
+//					contextMap.fillStyle = "#88BB88";
+//					contextMap.fill();
+//	
+//					contextMap.beginPath();
+//					contextMap.rect(posX, posY + 40, 64, 24);
+//					contextMap.strokeStyle = "#C19A6B";
+//					contextMap.stroke();
+//					contextMap.fillStyle = "#CD7F32";
+//					contextMap.fill();
+//				} else {
+//					contextMap.beginPath();
+//					contextMap.rect(posX, posY, 64, 64);
+//					contextMap.strokeStyle = "#99CC99";
+//					contextMap.stroke();
+//					contextMap.fillStyle = "#88BB88";
+//					contextMap.fill();
+//				}
+//
+//			} else {
 
 				contextMap.beginPath();
 				contextMap.rect(posX, posY, 64, 64);
 				contextMap.strokeStyle = "#88BB88";
 				contextMap.stroke();
-				contextMap.fillStyle = "#77AA77";
+				if (0 == landscapeArray[indexY][indexX]) {
+					contextMap.fillStyle = "#669966";
+				} else if (1 == landscapeArray[indexY][indexX]){
+					contextMap.fillStyle = "#77AA77";
+				} else if (2 == landscapeArray[indexY][indexX]){
+					contextMap.fillStyle = "#88BB88";
+				} else if (3 == landscapeArray[indexY][indexX]){
+					contextMap.fillStyle = "#99CC99";
+				} else if (4 == landscapeArray[indexY][indexX]){
+					contextMap.fillStyle = "#AADDAA";
+				}
+				// contextMap.fillStyle = "#77AA77";
 				contextMap.fill();
-			}
+//			}
 		}
 	}
 };

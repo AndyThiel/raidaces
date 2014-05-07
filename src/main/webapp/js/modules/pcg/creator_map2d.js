@@ -1,11 +1,13 @@
+var MIRRORMODE_POINT = 0;
+var MIRRORMODE_AXIS = 1;
+
 //
 // CreatorMap2D
 //
 function CreatorMap2D() {
+	this.mirrorMode = MIRRORMODE_AXIS;
+	this.mirrorLine = 0;
 }
-
-var MIRRORMODE_POINT = 0;
-var MIRRORMODE_AXIS = 1;
 
 CreatorMap2D.prototype = Object.create(AbstractCreator.prototype);
 CreatorMap2D.prototype.constructor = CreatorMap2D;
@@ -16,52 +18,88 @@ CreatorMap2D.prototype.constructor = CreatorMap2D;
 
 CreatorMap2D.prototype.create = function(streamSource) {
 
+	if (!this.context) {
+		throw "error_no_context";
+	}
+
 	var width = this.context.width;
 	var height = this.context.height;
 
+	// Create initial Map
 	var map = new Map2D(width, height);
-	log("map created with dimensions: " + map.mapArray.length + ", " + map.mapArray[0].length);
+	this.updateMirrorMode(streamSource);
+	this.renderInitialMapArray(streamSource, map, this.mirrorMode,
+			this.mirrorLine);
 
-	var indexY;
-	var indexX;
-	for (indexY = 0; indexY < height; indexY++) {
-		for (indexX = 0; indexX < width; indexX++) {
-			if (streamSource.consumeBoolean()) {
-				map.mapArray[indexY][indexX] = 1;
-			} else {
-				map.mapArray[indexY][indexX] = 0;
-			}
-		}
-	}
-
-	// this.logArray(map.mapArray);
-
-	var mirrorMode;
-	var mirrorLine;
-
-	if (streamSource.consumeBoolean()) {
-		mirrorMode = MIRRORMODE_AXIS;
-		mirrorLine = streamSource.consumeShort() % 4;
-		log("Mirror line: " + mirrorLine);
-	} else {
-		mirrorMode = MIRRORMODE_POINT;
-		mirrorLine = streamSource.consumeInt() % ((this.width - 1) + (this.height - 1));
-	}
-
+	// Apply update steps
 	var indexStep;
-	for (indexStep = 0; indexStep < 2; indexStep++) {
-		this.updateMapArray(map.mapArray, mirrorMode, mirrorLine);
+	var updateStepCount = this.getUpdateStepCount();
+	for (indexStep = 0; indexStep < updateStepCount; indexStep++) {
+		this.updateMap(streamSource, map, this.mirrorMode, this.mirrorLine,
+				indexStep);
 	}
-
-	// this.logArray(map.mapArray);
 
 	return map;
 };
 
-CreatorMap2D.prototype.updateMapArray = function(mapArray, mirrorMode, mirrorLine) {
+CreatorMap2D.prototype.updateMirrorMode = function(streamSource) {
 
-	// Not exactly needed right now, but might come in handy
-	// once the logic gets more complex ...
+	if (streamSource.consumeBoolean()) {
+		this.mirrorMode = MIRRORMODE_AXIS;
+		this.mirrorLine = streamSource.consumeShort() % 4;
+		log("AXIS Symmetry");
+	} else {
+		this.mirrorMode = MIRRORMODE_POINT;
+		this.mirrorLine = streamSource.consumeInt()
+				% ((this.width - 1) + (this.height - 1));
+		log("POINT Symmetry");
+	}
+};
+
+CreatorMap2D.prototype.renderInitialMapArray = function(streamSource, map,
+		mirrorMode, mirrorLine) {
+	this.forEachPixelToUpdate(streamSource, this, this.chooseRandomValue, map,
+			mirrorMode, mirrorLine);
+};
+
+CreatorMap2D.prototype.chooseRandomValue = function(streamSource, map, indexX,
+		indexY, mirrorIndexX, mirrorIndexY, neighborTopLeft, neighborTopCenter,
+		neighborTopRight, neighborLeft, neighborRight, neighborBottomLeft,
+		neighborBottomCenter, neighborBottomRight) {
+
+	// if (streamSource.consumeBoolean()) {
+	// map.mapArray[indexY][indexX] = 1;
+	// } else {
+	// map.mapArray[indexY][indexX] = 0;
+	// }
+
+	var initialValue = (streamSource.consumeShort() % 5);
+	map.mapArray[indexY][indexX] = initialValue;
+	map.mapArray[mirrorIndexY][mirrorIndexX] = initialValue;
+};
+
+CreatorMap2D.prototype.getUpdateStepCount = function() {
+	return 1;
+};
+
+CreatorMap2D.prototype.updateMap = function(streamSource, map, mirrorMode,
+		mirrorLine, indexStep) {
+	this.applyCellularAutomation(streamSource, map, mirrorMode, mirrorLine);
+};
+
+CreatorMap2D.prototype.applyCellularAutomation = function(streamSource, map,
+		mirrorMode, mirrorLine) {
+	// this.forEachPixelToUpdate(streamSource, this,
+	// this.basicCellularAutomationAction, map, mirrorMode, mirrorLine);
+	this.forEachPixelToUpdate(streamSource, this,
+			this.heightCellularAutomationAction, map, mirrorMode, mirrorLine);
+};
+
+CreatorMap2D.prototype.forEachPixelToUpdate = function(streamSource, scope,
+		action, map, mirrorMode, mirrorLine) {
+
+	var mapArray = map.mapArray;
+
 	var neighborTopLeft;
 	var neighborTopCenter;
 	var neighborTopRight;
@@ -98,8 +136,7 @@ CreatorMap2D.prototype.updateMapArray = function(mapArray, mirrorMode, mirrorLin
 		line.point2Y = maxIndexY - mirrorLine;
 	}
 
-	vertical:
-	for (indexY = 0; indexY <= maxIndexY; indexY++) {
+	vertical: for (indexY = 0; indexY <= maxIndexY; indexY++) {
 
 		indexTop = indexY - 1;
 		indexBottom = indexY + 1;
@@ -109,8 +146,7 @@ CreatorMap2D.prototype.updateMapArray = function(mapArray, mirrorMode, mirrorLin
 			indexBottom = 0;
 		}
 
-		horizontal:
-		for (indexX = 0; indexX <= maxIndexX; indexX++) {
+		horizontal: for (indexX = 0; indexX <= maxIndexX; indexX++) {
 
 			if (MIRRORMODE_AXIS == mirrorMode) {
 				if (0 == mirrorLine) {
@@ -144,7 +180,7 @@ CreatorMap2D.prototype.updateMapArray = function(mapArray, mirrorMode, mirrorLin
 				}
 			} else {
 				if (((line.point1Y <= indexY) || (line.point2Y <= indexY))
-				&& ((line.point1X <= indexX) || (line.point2X <= indexX))) {
+						&& ((line.point1X <= indexX) || (line.point2X <= indexX))) {
 
 					// FIXME: Probably there is a way to determine when we can
 					// continue vertical instead, which would be more efficient.
@@ -172,45 +208,116 @@ CreatorMap2D.prototype.updateMapArray = function(mapArray, mirrorMode, mirrorLin
 			neighborBottomCenter = mapArray[indexBottom][indexX];
 			neighborBottomRight = mapArray[indexBottom][indexRight];
 
-			var countNeighborsTrue = 0;
-			if (1 == neighborTopLeft) {
-				countNeighborsTrue++;
-			}
-			if (1 == neighborTopCenter) {
-				countNeighborsTrue++;
-			}
-			if (1 == neighborTopRight) {
-				countNeighborsTrue++;
-			}
-			if (1 == neighborLeft) {
-				countNeighborsTrue++;
-			}
-			if (1 == neighborRight) {
-				countNeighborsTrue++;
-			}
-			if (1 == neighborBottomLeft) {
-				countNeighborsTrue++;
-			}			
-			if (1 == neighborBottomCenter) {
-				countNeighborsTrue++;
-			}
-			if (1 == neighborBottomRight) {
-				countNeighborsTrue++;
-			}
-
-			// Guess I should update a buffer array first and keep using the original for the algorithm.
-			if (4 < countNeighborsTrue) {
-				mapArray[indexY][indexX] = 1;
-				mapArray[mirrorIndexY][mirrorIndexX] = 1;
-			} else if ((3 < countNeighborsTrue) && (1 == mapArray[indexY][indexX])) {
-				mapArray[indexY][indexX] = 1;
-				mapArray[mirrorIndexY][mirrorIndexX] = 1;
-			} else {
-				mapArray[indexY][indexX] = 0;
-				mapArray[mirrorIndexY][mirrorIndexX] = 0;
-			}
+			action.apply(scope, [ streamSource, map, indexX, indexY,
+					mirrorIndexX, mirrorIndexY, neighborTopLeft,
+					neighborTopCenter, neighborTopRight, neighborLeft,
+					neighborRight, neighborBottomLeft, neighborBottomCenter,
+					neighborBottomRight ]);
 		}
 	}
+};
+
+CreatorMap2D.prototype.basicCellularAutomationAction = function(streamSource,
+		map, indexX, indexY, mirrorIndexX, mirrorIndexY, neighborTopLeft,
+		neighborTopCenter, neighborTopRight, neighborLeft, neighborRight,
+		neighborBottomLeft, neighborBottomCenter, neighborBottomRight) {
+
+	var mapArray = map.mapArray;
+	var countNeighborsTrue = 0;
+
+	if (1 == neighborTopLeft) {
+		countNeighborsTrue++;
+	}
+	if (1 == neighborTopCenter) {
+		countNeighborsTrue++;
+	}
+	if (1 == neighborTopRight) {
+		countNeighborsTrue++;
+	}
+	if (1 == neighborLeft) {
+		countNeighborsTrue++;
+	}
+	if (1 == neighborRight) {
+		countNeighborsTrue++;
+	}
+	if (1 == neighborBottomLeft) {
+		countNeighborsTrue++;
+	}
+	if (1 == neighborBottomCenter) {
+		countNeighborsTrue++;
+	}
+	if (1 == neighborBottomRight) {
+		countNeighborsTrue++;
+	}
+
+	// Guess I should update a buffer array first and keep using the original
+	// for the algorithm.
+	if (4 < countNeighborsTrue) {
+		mapArray[indexY][indexX] = 1;
+		mapArray[mirrorIndexY][mirrorIndexX] = 1;
+	} else if ((3 < countNeighborsTrue) && (1 == mapArray[indexY][indexX])) {
+		mapArray[indexY][indexX] = 1;
+		mapArray[mirrorIndexY][mirrorIndexX] = 1;
+	} else {
+		mapArray[indexY][indexX] = 0;
+		mapArray[mirrorIndexY][mirrorIndexX] = 0;
+	}
+};
+
+CreatorMap2D.prototype.heightCellularAutomationAction = function(streamSource,
+		map, indexX, indexY, mirrorIndexX, mirrorIndexY, neighborTopLeft,
+		neighborTopCenter, neighborTopRight, neighborLeft, neighborRight,
+		neighborBottomLeft, neighborBottomCenter, neighborBottomRight) {
+
+	var newValueAmount = -1;
+	var newValue = -1;
+
+	var currentValueAmount;
+	var currentValue;
+	for (currentValue = 0; currentValue < 5; currentValue++) {
+
+		currentValueAmount = 0;
+
+		if (currentValue == map.mapArray[indexY][indexX]) {
+			currentValueAmount++;
+		}
+		if (currentValue == neighborTopLeft) {
+			currentValueAmount++;
+		}
+		if (currentValue == neighborTopCenter) {
+			currentValueAmount++;
+		}
+		if (currentValue == neighborTopRight) {
+			currentValueAmount++;
+		}
+		if (currentValue == neighborLeft) {
+			currentValueAmount++;
+		}
+		if (currentValue == neighborRight) {
+			currentValueAmount++;
+		}
+		if (currentValue == neighborBottomLeft) {
+			currentValueAmount++;
+		}
+		if (currentValue == neighborBottomCenter) {
+			currentValueAmount++;
+		}
+		if (currentValue == neighborBottomRight) {
+			currentValueAmount++;
+		}
+
+		if (newValueAmount < currentValueAmount) {
+			newValueAmount = currentValueAmount;
+			newValue = currentValue;
+		}
+	}
+
+	map.mapArray[indexY][indexX] = newValue;
+	map.mapArray[mirrorIndexY][mirrorIndexX] = newValue;
+
+	// if ((map.mapArray.length / 2) == indexY) {
+	// log("New height chosen: " + newValue);
+	// }
 };
 
 CreatorMap2D.prototype.getThemes = function(streamSource) {
