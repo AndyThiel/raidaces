@@ -77,7 +77,7 @@
 
 			<canvas id="gameCanvas" width="800" height="600" onClick="toggleRunning(gameContext)"></canvas>
 			<div id="debugArea">The Epic Battles Of The Ancient Clans ... or whatever ...</div>
-			<canvas id="mapCanvas" width="128" height="128"></canvas>
+			<canvas id="mapCanvas" width="256" height="256"></canvas>
 
 			<div class="clear"></div>
 			<div id="hiddenContentArea"></div>
@@ -100,12 +100,12 @@
 			gameContext.fillText("Loading", 350, 294);
 
 			mapContext.beginPath();
-			mapContext.rect(0, 0, 128, 128);
+			mapContext.rect(0, 0, mapCanvas.width, mapCanvas.height);
 			mapContext.fillStyle = "#88BB88";
 			mapContext.fill();
 			mapContext.font = "bold 10px sans-serif";
 			mapContext.fillStyle = "#FFFFFF";
-			mapContext.fillText("Loading", 42, 62);
+			mapContext.fillText("Loading", (mapCanvas.width / 2) - 12, (mapCanvas.height / 2) - 2);
 
 			initEngine(gameContext);
 			initGame(gameContext, hiddenContentArea);

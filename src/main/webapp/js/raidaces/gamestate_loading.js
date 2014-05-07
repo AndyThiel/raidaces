@@ -4,7 +4,7 @@
 function GameStateLoading(gamestateEngine) {
 	AbstractGameState.apply(this, arguments);
 
-	this.MAPSIZE = 128;
+	this.MAPSIZE = mapCanvas.width;
 	this.TILESIZE = 64;
 	this.ACTUALLY_DO_STUFF = true;
 
@@ -83,8 +83,13 @@ GameStateLoading.prototype.init = function() {
 				mapContext.beginPath();
 				mapContext.rect(indexMapX, indexMapY, 1, 1);
 
-				if ((indexMapY >= 56 && indexMapY <= 72 && (56 == indexMapX || 72 == indexMapX))
-					|| (indexMapX >= 56 && indexMapX <= 72 && (56 == indexMapY || 72 == indexMapY))) {
+				var left = this.MAPSIZE / 2 - 8;
+				var right = this.MAPSIZE / 2 + 8;
+				var top = this.MAPSIZE / 2 - 8;
+				var bottom = this.MAPSIZE / 2 + 8;
+
+				if ((indexMapY >= top && indexMapY <= bottom && (top == indexMapX || bottom == indexMapX))
+					|| (indexMapX >= left && indexMapX <= right && (left == indexMapY || right == indexMapY))) {
 					mapContext.strokeStyle = "#FFFFFF";
 				} else {
 					if (0 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
@@ -102,6 +107,10 @@ GameStateLoading.prototype.init = function() {
 				mapContext.stroke();
 			}
 		}
+
+		var left = this.MAPSIZE / 2 - 8;
+		var top = this.MAPSIZE / 2 - 8;
+
 		// There will always be 25 rendered landscape images and parts of 9 of them
 		// will be visible ...
 		// ... as the player moves, the content of those images will be reorganized
@@ -118,8 +127,8 @@ GameStateLoading.prototype.init = function() {
 			var indexX = Math.floor(indexCurrentLandscape % 5);
 
 			// 120 is the top-left corner when the player is in the center of the map.
-			var offsetY = 56 + ((indexY - 2) * 16);
-			var offsetX = 56 + ((indexX - 2) * 16);
+			var offsetY = top + ((indexY - 2) * 16);
+			var offsetX = left + ((indexX - 2) * 16);
 			this.creatorLandscapeContext.setOffset(offsetX, offsetY);
 
 			var currentLandscape = this.creatorLandscape.create(streamSource);

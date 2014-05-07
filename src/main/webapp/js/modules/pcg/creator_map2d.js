@@ -73,7 +73,7 @@ CreatorMap2D.prototype.chooseRandomValue = function(streamSource, map, indexX,
 	// map.mapArray[indexY][indexX] = 0;
 	// }
 
-	var initialValue = (streamSource.consumeShort() % 5);
+	var initialValue = (streamSource.consumeShort() % 2);
 	map.mapArray[indexY][indexX] = initialValue;
 	map.mapArray[mirrorIndexY][mirrorIndexX] = initialValue;
 };
