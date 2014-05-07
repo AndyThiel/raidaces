@@ -5,7 +5,7 @@ Client
 	------------
 
 	Is it enough to populate the scene graph with entities in the loading game state,
-	or do I need to store the whole created map (as opposed to creating a map preview entity for a widget)
+	or do I need to store the whole created map (as opposed to creating a map preview entity for a widget).
 
 	Map creation:
 	-------------
@@ -70,3 +70,75 @@ Server
 
 	Optimization:
 	-------------
+
+
+
+Milestones
+==========
+
+M1 (05.2014 - 06.2014)
+
+	Entity Manager
+		Map turned into landscapes
+		Landscapes turned into entities
+		Entities added to scene graph
+
+	Scene Graph rendering
+		Top-Down Map Rendering
+
+	Game Logic
+		Menu Gamestate
+		Automated Random Camera Movement
+
+	PCG
+		Map / Landscape creation
+		
+
+
+M2 (07.2014 - 08.2014)
+
+	Entity Manager
+		Gameplay objects (Destructables, Monsters, Towers, Shops, Item Spawns)
+
+	Scene Graph rendering
+		Object placeholder rendering (primitives)
+
+	Game Logic
+		Settings Gamestate (Controls)
+		Camera control
+
+	PCG
+		Object placeholder placement
+
+
+
+M3 (09.2014 - 10.2014)
+
+	Audio Manager
+		Music Playback
+		Sound Playback
+
+	Entity Manager
+
+	Scene Graph rendering
+
+	Game Logic
+		Game modes (MOBA / Deathmatch)
+
+	PCG
+		Model creation / animation
+
+	Server Logic
+		Setting up Java Server
+
+M4 (11.2014 - 12.2014)
+
+	Resource loading
+		PGC On Server
+
+	Client / Server Communication
+
+	Server Logic
+		Game management
+		User registration
+		Subscriptions
