@@ -12,5 +12,5 @@ CreatorMapMoba.prototype.constructor = CreatorMapMoba;
 // Methods
 //
 CreatorMapMoba.prototype.getUpdateStepCount = function() {
-	return 1;
+	return 4;
 };

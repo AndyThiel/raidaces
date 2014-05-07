@@ -309,6 +309,10 @@ CreatorMap2D.prototype.heightCellularAutomationAction = function(streamSource,
 		if (newValueAmount < currentValueAmount) {
 			newValueAmount = currentValueAmount;
 			newValue = currentValue;
+		} else if (newValueAmount == currentValueAmount) {
+			if (streamSource.consumeBoolean()) {
+				newValue = currentValue;
+			}
 		}
 	}
 
