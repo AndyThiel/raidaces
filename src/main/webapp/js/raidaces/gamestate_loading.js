@@ -93,7 +93,7 @@ GameStateLoading.prototype.init = function() {
 					mapContext.strokeStyle = "#FFFFFF";
 				} else {
 					if (0 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
-						mapContext.strokeStyle = "#669966";
+						mapContext.strokeStyle = "#666699";
 					} else if (1 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]){
 						mapContext.strokeStyle = "#77AA77";
 					} else if (2 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]){
@@ -287,10 +287,10 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape, tile
 
 				contextMap.beginPath();
 				contextMap.rect(posX, posY, 64, 64);
-				contextMap.strokeStyle = "#88BB88";
+				contextMap.strokeStyle = "#AADDAA";
 				contextMap.stroke();
 				if (0 == landscapeArray[indexY][indexX]) {
-					contextMap.fillStyle = "#669966";
+					contextMap.fillStyle = "#666699";
 				} else if (1 == landscapeArray[indexY][indexX]){
 					contextMap.fillStyle = "#77AA77";
 				} else if (2 == landscapeArray[indexY][indexX]){
