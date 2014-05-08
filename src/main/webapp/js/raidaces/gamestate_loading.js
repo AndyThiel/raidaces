@@ -287,7 +287,7 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape, tile
 
 				contextMap.beginPath();
 				contextMap.rect(posX, posY, 64, 64);
-				contextMap.strokeStyle = "#AADDAA";
+				contextMap.strokeStyle = "#7777AA";
 				contextMap.stroke();
 				if (0 == landscapeArray[indexY][indexX]) {
 					contextMap.fillStyle = "#666699";
