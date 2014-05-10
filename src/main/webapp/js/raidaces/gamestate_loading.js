@@ -211,8 +211,10 @@ GameStateLoading.prototype.initHiddenContentArea = function(hiddenContentArea) {
 		hiddenContentArea.appendChild(landscapeMapImage);
 		hiddenContentArea.appendChild(landscapeNormalMapImage);
 		hiddenContentArea.appendChild(landscapeDepthMapImage);
-		if (12 == indexCurrentLandscape) {
-			landscapeMapImage.className = "visible";
+		if (6 == indexCurrentLandscape || 7 == indexCurrentLandscape || 8 == indexCurrentLandscape
+				|| 11 == indexCurrentLandscape || 12 == indexCurrentLandscape || 13 == indexCurrentLandscape
+				|| 16 == indexCurrentLandscape || 17 == indexCurrentLandscape || 18 == indexCurrentLandscape) {
+//			landscapeMapImage.className = "visible";
 			landscapeMapImage.addEventListener('load', function() {
 				updateMap(gameContext);
 			}, false);
@@ -316,12 +318,12 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 			var heightNeighborRight;
 
 			if (indexY >= landscapeArray.length - 1) {
-				heightNeighborBottomCenter = height;
+				heightNeighborBottomCenter = -2;
 			} else {
 				heightNeighborBottomCenter = landscapeArray[indexY + 1][indexX] - 2;
 			}
 			if (indexX >= landscapeArray[indexY].length - 1) {
-				heightNeighborRight = height;
+				heightNeighborRight = -2;
 			} else {
 				heightNeighborRight = landscapeArray[indexY][indexX + 1] - 2;
 			}
@@ -420,10 +422,45 @@ function makeUpdateExecution() {
 
 	return function() {
 
-		var centerImage = document.getElementById("imgMap12");
 		gameContext.clearRect(0,0,800,600);
-		gameContext.drawImage(centerImage, 112.0, 212.0, 800.0, 600.0, 0.0,
-				0.0, 800.0, 600.0);
+
+		gameContext.drawImage(document.getElementById("imgMap6"),
+				0.0, 0.0, 1024.0, 1024.0,
+				-112.0, (-212.0 - 512.0), 1024.0, 1024.0);
+
+		gameContext.drawImage(document.getElementById("imgMap7"),
+				0.0, 0.0, 1024.0, 1024.0,
+				(-112.0 + 512.0), (-212.0 - 256.0), 1024.0, 1024.0);
+
+		gameContext.drawImage(document.getElementById("imgMap8"),
+				0.0, 0.0, 1024.0, 1024.0,
+				(-112.0 + 1024.0), -212.0, 1024.0, 1024.0);
+
+		gameContext.drawImage(document.getElementById("imgMap11"),
+				0.0, 0.0, 1024.0, 1024.0,
+				(-112.0 - 512.0), (-212.0 - 256.0), 1024.0, 1024.0);
+
+		gameContext.drawImage(document.getElementById("imgMap12"),
+				0.0, 0.0, 1024.0, 1024.0,
+				-112.0, -212.0, 1024.0, 1024.0);
+		
+		gameContext.drawImage(document.getElementById("imgMap13"),
+				0.0, 0.0, 1024.0, 1024.0,
+				(-112.0 + 512.0), (-212.0 + 256.0), 1024.0, 1024.0);
+
+		gameContext.drawImage(document.getElementById("imgMap16"),
+				0.0, 0.0, 1024.0, 1024.0,
+				-112.0 - 1024.0, -212.0, 1024.0, 1024.0);
+
+		gameContext.drawImage(document.getElementById("imgMap17"),
+				0.0, 0.0, 1024.0, 1024.0,
+				-112.0 - 512.0, -212.0 + 256.0, 1024.0, 1024.0);
+
+		gameContext.drawImage(document.getElementById("imgMap18"),
+				0.0, 0.0, 1024.0, 1024.0,
+				-112.0, -212.0 + 512.0, 1024.0, 1024.0);
+
 		engine.eventBus.fireEvent(new EventMapUpdated());
+
 	};
 };
