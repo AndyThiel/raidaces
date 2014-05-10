@@ -264,6 +264,7 @@ GameStateLoading.prototype.makeRenderExecution = function(gamestate_loading,
 GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 		tileSize) {
 
+	var renderGrid = true;
 	var contextMap = document.getElementById('canvasMap').getContext('2d');
 	contextMap.clearRect(0, 0, 1024, 1024);
 
@@ -301,6 +302,16 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 			contextMap.fillStyle = this.getFillStyle(height);
 			contextMap.fill();
 
+			contextMap.strokeStyle = 'transparent';
+			contextMap.stroke();
+			if (renderGrid) {
+				contextMap.strokeStyle = "#999";
+				contextMap.stroke();
+			} else {
+				contextMap.strokeStyle = this.getFillStyle(height);
+				contextMap.stroke();				
+			}
+
 			var heightNeighborBottomCenter;
 			var heightNeighborRight;
 
@@ -330,8 +341,18 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 				contextMap.closePath();
 				contextMap.fillStyle = 'transparent';
 				contextMap.fill();
-				contextMap.fillStyle = "#CC8866";
+				contextMap.fillStyle = "#CC9966";
 				contextMap.fill();
+
+				contextMap.strokeStyle = 'transparent';
+				contextMap.stroke();
+				if (renderGrid) {
+					contextMap.strokeStyle = "#999";
+					contextMap.stroke();
+				} else {
+					contextMap.strokeStyle = "#CC9966";
+					contextMap.stroke();				
+				}
 			}
 
 			if (height > heightNeighborRight) {
@@ -350,6 +371,16 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 				contextMap.fill();
 				contextMap.fillStyle = "#AA6644";
 				contextMap.fill();
+
+				contextMap.strokeStyle = 'transparent';
+				contextMap.stroke();
+				if (renderGrid) {
+					contextMap.strokeStyle = "#999";
+					contextMap.stroke();
+				} else {
+					contextMap.strokeStyle = "#AA6644";
+					contextMap.stroke();				
+				}
 			}
 		}
 	}
