@@ -284,7 +284,7 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 
 		for (indexX = 0; indexX < landscapeArray[indexY].length; indexX++) {
 
-			var heightStep = tileSize;
+			var heightStep = tileSize * 3 / 4;
 
 			var height = landscapeArray[indexY][indexX] - 2;
 			var heightOffset = height * heightStep;
