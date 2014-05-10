@@ -32,12 +32,13 @@ CreatorMapMoba.prototype.updateMap = function(streamSource, map, mirrorMode,
 	var raiseLowerMap = this.creatorRaiseLowerMap.create(streamSource);
 
 	var checkedRaiseAndLowerAction = this
-			.createCheckedRaiseAndLowerAction(raiseLowerMap);
+			.createCheckedRaiseAndLowerAction((0 == (indexStep % 2)), raiseLowerMap);
+
 	this.helper.forEachPixelToUpdate(streamSource, this,
 			checkedRaiseAndLowerAction, map, mirrorMode, mirrorLine);
 };
 
-CreatorMapMoba.prototype.createCheckedRaiseAndLowerAction = function(
+CreatorMapMoba.prototype.createCheckedRaiseAndLowerAction = function(doRaise,
 		raiseLowerMap) {
 
 	return function(streamSource, map, indexX, indexY, mirrorIndexX,
@@ -47,16 +48,16 @@ CreatorMapMoba.prototype.createCheckedRaiseAndLowerAction = function(
 
 		var currentValue = map.mapArray[indexY][indexX];
 
-		var doRaise = raiseLowerMap.mapArray[indexY][indexX];
-
-		if (doRaise) {
-			map.mapArray[indexY][indexX] = currentValue + 1;
-		} else if (!doRaise) {
-			map.mapArray[indexY][indexX] = currentValue - 1;
+		if (1 == raiseLowerMap.mapArray[indexY][indexX]) {
+			if (doRaise) {
+				map.mapArray[indexY][indexX] = currentValue + 1;
+			} else {
+				map.mapArray[indexY][indexX] = currentValue - 1;
+			}
 		}
 	};
 };
 
 CreatorMapMoba.prototype.getUpdateStepCount = function() {
-	return 2;
+	return 4;
 };

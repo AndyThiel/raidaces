@@ -284,8 +284,10 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 
 		for (indexX = 0; indexX < landscapeArray[indexY].length; indexX++) {
 
+			var heightStep = tileSize;
+
 			var height = landscapeArray[indexY][indexX] - 2;
-			var heightOffset = height * (tileSize / 2);
+			var heightOffset = height * heightStep;
 
 			var posX = indexX * tileSize;
 			var posY = indexY * tileSize;
@@ -330,14 +332,14 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 
 			if (height > heightNeighborBottomCenter) {
 
-				heightOffset = (height - heightNeighborBottomCenter)
-						* (tileSize / 2);
+				var cliffHeightOffset = (height - heightNeighborBottomCenter)
+						* heightStep;
 
 				contextMap.beginPath();
 				contextMap.moveTo(isoX - tileSize, isoY + (tileSize / 2));
 				contextMap.lineTo(isoX, isoY + tileSize);
-				contextMap.lineTo(isoX, isoY + tileSize + heightOffset);
-				contextMap.lineTo(isoX - tileSize, isoY + heightOffset
+				contextMap.lineTo(isoX, isoY + tileSize + cliffHeightOffset);
+				contextMap.lineTo(isoX - tileSize, isoY + cliffHeightOffset
 						+ (tileSize / 2));
 				contextMap.lineTo(isoX - tileSize, isoY + (tileSize / 2));
 				contextMap.closePath();
@@ -359,14 +361,14 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 
 			if (height > heightNeighborRight) {
 
-				heightOffset = (height - heightNeighborRight) * (tileSize / 2);
+				var cliffHeightOffset = (height - heightNeighborRight) * heightStep;
 
 				contextMap.beginPath();
 				contextMap.moveTo(isoX, isoY + tileSize);
 				contextMap.lineTo(isoX + tileSize, isoY + (tileSize / 2));
-				contextMap.lineTo(isoX + tileSize, isoY + heightOffset
+				contextMap.lineTo(isoX + tileSize, isoY + cliffHeightOffset
 						+ (tileSize / 2));
-				contextMap.lineTo(isoX, isoY + heightOffset + tileSize);
+				contextMap.lineTo(isoX, isoY + cliffHeightOffset + tileSize);
 				contextMap.lineTo(isoX, isoY + tileSize);
 				contextMap.closePath();
 				contextMap.fillStyle = 'transparent';
