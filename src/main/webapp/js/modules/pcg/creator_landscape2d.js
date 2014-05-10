@@ -17,6 +17,9 @@ CreatorLandscape2D.prototype.create = function(streamSource) {
 	var offsetY = this.context.offsetY;
 	var width = this.context.width;
 	var height = this.context.height;
+
+	log("lsc width: " + width);
+	log("lsc height: " + height);
 	// var tilesize = this.context.tilesize;
 	// var projectionMode = this.context.projectionMode;
 	var map = this.context.map;
@@ -52,7 +55,7 @@ CreatorLandscape2D.prototype.create = function(streamSource) {
 			indexBottom = 0;
 		}
 
-		var maxIndexX = mapArray[indexY].length - 1;
+		var maxIndexX = width - 1;
 		for (indexX = 0; indexX <= maxIndexX; indexX++) {
 
 			indexLeft = indexX - 1;

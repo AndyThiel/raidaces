@@ -5,7 +5,7 @@ function GameStateLoading(gamestateEngine) {
 	AbstractGameState.apply(this, arguments);
 
 	this.MAPSIZE = mapCanvas.width;
-	this.TILESIZE = 64;
+	this.TILESIZE = 32;
 	this.ACTUALLY_DO_STUFF = true;
 
 	this.creatorThemeWhitelist;
@@ -58,20 +58,26 @@ GameStateLoading.prototype.init = function() {
 	log("context objects set");
 
 	// Init context objects for desired creation settings
-	this.creatorThemeWhitelistContext.registerThemes(this.creatorMap.getThemes());
-	this.creatorMapContext.setDimensions(this.MAPSIZE, this.MAPSIZE); // Dimension in tiles
+	this.creatorThemeWhitelistContext.registerThemes(this.creatorMap
+			.getThemes());
+	this.creatorMapContext.setDimensions(this.MAPSIZE, this.MAPSIZE); // Dimension
+	// in
+	// tiles
 	this.creatorLandscapeContext.setProjectionMode(PROJECTION_TOP);
 	// creatorLandscapeContext.setProjectionMode(PROJECTION_ISO);
-	this.creatorLandscapeContext.setTilesize(this.TILESIZE); // Tile size in pixels
+	this.creatorLandscapeContext.setTilesize(this.TILESIZE); // Tile size in
+	// pixels
 	this.creatorLandscapeContext.setDimensions(16, 16); // Dimension in tiles
 	log("context settings complete");
 
 	if (this.ACTUALLY_DO_STUFF) {
 
 		// Use the creators to populate more settings in the context objects
-		this.creatorMapContext.setThemeWhitelist(this.creatorThemeWhitelist.create(streamSource));
+		this.creatorMapContext.setThemeWhitelist(this.creatorThemeWhitelist
+				.create(streamSource));
 		log("Whitelist created");
-		this.creatorLandscapeContext.setMap(this.creatorMap.create(streamSource));
+		this.creatorLandscapeContext.setMap(this.creatorMap
+				.create(streamSource));
 		log("Map created");
 
 		var indexMapY;
@@ -89,18 +95,18 @@ GameStateLoading.prototype.init = function() {
 				var bottom = this.MAPSIZE / 2 + 8;
 
 				if ((indexMapY >= top && indexMapY <= bottom && (top == indexMapX || bottom == indexMapX))
-					|| (indexMapX >= left && indexMapX <= right && (left == indexMapY || right == indexMapY))) {
+						|| (indexMapX >= left && indexMapX <= right && (left == indexMapY || right == indexMapY))) {
 					mapContext.strokeStyle = "#FFFFFF";
 				} else {
 					if (0 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
-						mapContext.strokeStyle = "#666699";
-					} else if (1 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]){
+						mapContext.strokeStyle = "#7777AA";
+					} else if (1 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
 						mapContext.strokeStyle = "#77AA77";
-					} else if (2 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]){
+					} else if (2 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
 						mapContext.strokeStyle = "#88BB88";
-					} else if (3 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]){
+					} else if (3 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
 						mapContext.strokeStyle = "#99CC99";
-					} else if (4 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]){
+					} else if (4 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
 						mapContext.strokeStyle = "#AADDAA";
 					}
 				}
@@ -111,9 +117,11 @@ GameStateLoading.prototype.init = function() {
 		var left = this.MAPSIZE / 2 - 8;
 		var top = this.MAPSIZE / 2 - 8;
 
-		// There will always be 25 rendered landscape images and parts of 9 of them
+		// There will always be 25 rendered landscape images and parts of 9 of
+		// them
 		// will be visible ...
-		// ... as the player moves, the content of those images will be reorganized
+		// ... as the player moves, the content of those images will be
+		// reorganized
 		// and the offsets adjusted accordingly.
 		// # # # # #
 		// # # # # #
@@ -126,15 +134,18 @@ GameStateLoading.prototype.init = function() {
 			var indexY = Math.floor(indexCurrentLandscape / 5);
 			var indexX = Math.floor(indexCurrentLandscape % 5);
 
-			// 120 is the top-left corner when the player is in the center of the map.
+			// 120 is the top-left corner when the player is in the center of
+			// the map.
 			var offsetY = top + ((indexY - 2) * 16);
 			var offsetX = left + ((indexX - 2) * 16);
 			this.creatorLandscapeContext.setOffset(offsetX, offsetY);
 
 			var currentLandscape = this.creatorLandscape.create(streamSource);
-			this.landscapeToImages(currentLandscape, this.TILESIZE, indexCurrentLandscape);
+			this.landscapeToImages(currentLandscape, this.TILESIZE,
+					indexCurrentLandscape);
 
-			var landscapeEntity = this.landscapeToEntity(currentLandscape, this.TILESIZE);
+			var landscapeEntity = this.landscapeToEntity(currentLandscape,
+					this.TILESIZE);
 
 			sceneModule.registerEntity(landscapeEntity);
 		}
@@ -158,11 +169,10 @@ GameStateLoading.prototype.uninit = function() {
 	this.isInitialized = false;
 };
 
-
-
 GameStateLoading.prototype.initHiddenContentArea = function(hiddenContentArea) {
 
-	// The canvases are used to render the images that are eventually stored in the images created below.
+	// The canvases are used to render the images that are eventually stored in
+	// the images created below.
 	var landscapeMapCanvas = document.createElement("canvas");
 	var landscapeNormalMapCanvas = document.createElement("canvas");
 	var landscapeDepthMapCanvas = document.createElement("canvas");
@@ -203,116 +213,170 @@ GameStateLoading.prototype.initHiddenContentArea = function(hiddenContentArea) {
 		hiddenContentArea.appendChild(landscapeDepthMapImage);
 		if (12 == indexCurrentLandscape) {
 			landscapeMapImage.className = "visible";
-			landscapeMapImage.addEventListener('load', function() { updateMap(gameContext); }, false);
+			landscapeMapImage.addEventListener('load', function() {
+				updateMap(gameContext);
+			}, false);
 		}
 	}
 };
 
-GameStateLoading.prototype.landscapeToImages = function(currentLandscape, tileSize, indexCurrentLandscape) {
+GameStateLoading.prototype.landscapeToImages = function(currentLandscape,
+		tileSize, indexCurrentLandscape) {
 
-	setTimeout(this.makeRenderExecution(this, currentLandscape, indexCurrentLandscape, tileSize), (indexCurrentLandscape * 200));
+	setTimeout(this.makeRenderExecution(this, currentLandscape,
+			indexCurrentLandscape, tileSize), (indexCurrentLandscape * 200));
 
-//	this.renderLandscapeMaps(currentLandscape, tileSize);
-//
-//	document.getElementById('imgMap' + indexCurrentLandscape).src = document.getElementById('canvasMap').toDataURL();
-//	document.getElementById('imgNormalMap' + indexCurrentLandscape).src = document.getElementById('canvasNormalMap').toDataURL();
-//	document.getElementById('imgDepthMap' + indexCurrentLandscape).src = document.getElementById('canvasDepthMap').toDataURL();
+	// this.renderLandscapeMaps(currentLandscape, tileSize);
+	//
+	// document.getElementById('imgMap' + indexCurrentLandscape).src =
+	// document.getElementById('canvasMap').toDataURL();
+	// document.getElementById('imgNormalMap' + indexCurrentLandscape).src =
+	// document.getElementById('canvasNormalMap').toDataURL();
+	// document.getElementById('imgDepthMap' + indexCurrentLandscape).src =
+	// document.getElementById('canvasDepthMap').toDataURL();
 };
 
-GameStateLoading.prototype.makeRenderExecution = function(gamestate_loading, currentLandscape, indexCurrentLandscape, tileSize) {
+GameStateLoading.prototype.makeRenderExecution = function(gamestate_loading,
+		currentLandscape, indexCurrentLandscape, tileSize) {
 
 	return function() {
 
 		gamestate_loading.renderLandscapeMaps(currentLandscape, tileSize);
 
-//		setTimeout(function() {
-			document.getElementById('imgMap' + indexCurrentLandscape).src = document.getElementById('canvasMap').toDataURL();
-//		}, 10);
-//		setTimeout(function() {
-			document.getElementById('imgNormalMap' + indexCurrentLandscape).src = document.getElementById('canvasNormalMap').toDataURL();
-//		}, 10);
-//		setTimeout(function() {
-			document.getElementById('imgDepthMap' + indexCurrentLandscape).src = document.getElementById('canvasDepthMap').toDataURL();
-//		}, 10);
+		// setTimeout(function() {
+		document.getElementById('imgMap' + indexCurrentLandscape).src = document
+				.getElementById('canvasMap').toDataURL();
+		// }, 10);
+		// setTimeout(function() {
+		document.getElementById('imgNormalMap' + indexCurrentLandscape).src = document
+				.getElementById('canvasNormalMap').toDataURL();
+		// }, 10);
+		// setTimeout(function() {
+		document.getElementById('imgDepthMap' + indexCurrentLandscape).src = document
+				.getElementById('canvasDepthMap').toDataURL();
+		// }, 10);
 
 		// eventBus
-		//		.fireEvent(new EventGameStateChanged(oldGameState, newGameState));
+		// .fireEvent(new EventGameStateChanged(oldGameState, newGameState));
 	};
 };
 
-GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape, tileSize) {
+GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
+		tileSize) {
 
 	var contextMap = document.getElementById('canvasMap').getContext('2d');
-	// var contextNormal = document.getElementById('canvasNormalMap').getContext('2d');
-	// var contextDepth = document.getElementById('canvasDepthMap').getContext('2d');
+	contextMap.clearRect(0, 0, 1024, 1024);
+
+	// var contextNormal =
+	// document.getElementById('canvasNormalMap').getContext('2d');
+	// var contextDepth =
+	// document.getElementById('canvasDepthMap').getContext('2d');
 
 	var landscapeArray = currentLandscape.landscapeArray;
 
 	var indexY;
 	var indexX;
+
 	for (indexY = 0; indexY < landscapeArray.length; indexY++) {
+
 		for (indexX = 0; indexX < landscapeArray[indexY].length; indexX++) {
 
-			contextMap.lineWidth = 2;
+			var height = landscapeArray[indexY][indexX] - 2;
+			var heightOffset = height * (tileSize / 2);
 
-			var posY = indexY * tileSize;
 			var posX = indexX * tileSize;
-//			if (landscapeArray[indexY][indexX]) {
-//
-//				if ((indexY < landscapeArray.length - 1) && !landscapeArray[indexY + 1][indexX]) {
-//
-//					contextMap.beginPath();
-//					contextMap.rect(posX, posY, 64, 40);
-//					contextMap.strokeStyle = "#99CC99";
-//					contextMap.stroke();
-//					contextMap.fillStyle = "#88BB88";
-//					contextMap.fill();
-//	
-//					contextMap.beginPath();
-//					contextMap.rect(posX, posY + 40, 64, 24);
-//					contextMap.strokeStyle = "#C19A6B";
-//					contextMap.stroke();
-//					contextMap.fillStyle = "#CD7F32";
-//					contextMap.fill();
-//				} else {
-//					contextMap.beginPath();
-//					contextMap.rect(posX, posY, 64, 64);
-//					contextMap.strokeStyle = "#99CC99";
-//					contextMap.stroke();
-//					contextMap.fillStyle = "#88BB88";
-//					contextMap.fill();
-//				}
-//
-//			} else {
+			var posY = indexY * tileSize;
+			var isoX = 512 + (posX - posY);
+			var isoY = 256 + ((posX + posY) / 2) - heightOffset;
+
+			contextMap.beginPath();
+			contextMap.moveTo(isoX, isoY);
+			contextMap.lineTo(isoX + tileSize, isoY + (tileSize / 2));
+			contextMap.lineTo(isoX, isoY + tileSize);
+			contextMap.lineTo(isoX - tileSize, isoY + (tileSize / 2));
+			contextMap.lineTo(isoX, isoY);
+			contextMap.closePath();
+			contextMap.fillStyle = 'transparent';
+			contextMap.fill();
+			contextMap.fillStyle = this.getFillStyle(height);
+			contextMap.fill();
+
+			var heightNeighborBottomCenter;
+			var heightNeighborRight;
+
+			if (indexY >= landscapeArray.length - 1) {
+				heightNeighborBottomCenter = height;
+			} else {
+				heightNeighborBottomCenter = landscapeArray[indexY + 1][indexX] - 2;
+			}
+			if (indexX >= landscapeArray[indexY].length - 1) {
+				heightNeighborRight = height;
+			} else {
+				heightNeighborRight = landscapeArray[indexY][indexX + 1] - 2;
+			}
+
+			if (height > heightNeighborBottomCenter) {
+
+				heightOffset = (height - heightNeighborBottomCenter)
+						* (tileSize / 2);
 
 				contextMap.beginPath();
-				contextMap.rect(posX, posY, 64, 64);
-				contextMap.strokeStyle = "#7777AA";
-				contextMap.stroke();
-				if (0 == landscapeArray[indexY][indexX]) {
-					contextMap.fillStyle = "#666699";
-				} else if (1 == landscapeArray[indexY][indexX]){
-					contextMap.fillStyle = "#77AA77";
-				} else if (2 == landscapeArray[indexY][indexX]){
-					contextMap.fillStyle = "#88BB88";
-				} else if (3 == landscapeArray[indexY][indexX]){
-					contextMap.fillStyle = "#99CC99";
-				} else if (4 == landscapeArray[indexY][indexX]){
-					contextMap.fillStyle = "#AADDAA";
-				}
-				// contextMap.fillStyle = "#77AA77";
+				contextMap.moveTo(isoX - tileSize, isoY + (tileSize / 2));
+				contextMap.lineTo(isoX, isoY + tileSize);
+				contextMap.lineTo(isoX, isoY + tileSize + heightOffset);
+				contextMap.lineTo(isoX - tileSize, isoY + heightOffset
+						+ (tileSize / 2));
+				contextMap.lineTo(isoX - tileSize, isoY + (tileSize / 2));
+				contextMap.closePath();
+				contextMap.fillStyle = 'transparent';
 				contextMap.fill();
-//			}
+				contextMap.fillStyle = "#CC8866";
+				contextMap.fill();
+			}
+
+			if (height > heightNeighborRight) {
+
+				heightOffset = (height - heightNeighborRight) * (tileSize / 2);
+
+				contextMap.beginPath();
+				contextMap.moveTo(isoX, isoY + tileSize);
+				contextMap.lineTo(isoX + tileSize, isoY + (tileSize / 2));
+				contextMap.lineTo(isoX + tileSize, isoY + heightOffset
+						+ (tileSize / 2));
+				contextMap.lineTo(isoX, isoY + heightOffset + tileSize);
+				contextMap.lineTo(isoX, isoY + tileSize);
+				contextMap.closePath();
+				contextMap.fillStyle = 'transparent';
+				contextMap.fill();
+				contextMap.fillStyle = "#AA6644";
+				contextMap.fill();
+			}
 		}
 	}
 };
 
+GameStateLoading.prototype.getFillStyle = function(tileValue) {
+	if (-2 == tileValue) {
+		return "#7777AA";
+	} else if (-1 == tileValue) {
+		return "#77AA77";
+	} else if (0 == tileValue) {
+		return "#88BB88";
+	} else if (1 == tileValue) {
+		return "#99CC99";
+	} else if (2 == tileValue) {
+		return "#AADDAA";
+	}
+	throw "error_unhandled_tile_value " + tileValue;
+};
+
 /*
- * Will create an entity object for the scene graph,
- * probably with the collision information ...
- *
+ * Will create an entity object for the scene graph, probably with the collision
+ * information ...
+ * 
  */
-GameStateLoading.prototype.landscapeToEntity = function(currentLandscape, tileSize) {
+GameStateLoading.prototype.landscapeToEntity = function(currentLandscape,
+		tileSize) {
 
 	// ...
 };
@@ -326,7 +390,9 @@ function makeUpdateExecution() {
 	return function() {
 
 		var centerImage = document.getElementById("imgMap12");
-		gameContext.drawImage(centerImage, 112.0, 212.0, 800.0, 600.0, 0.0, 0.0, 800.0, 600.0);
+		gameContext.clearRect(0,0,800,600);
+		gameContext.drawImage(centerImage, 112.0, 212.0, 800.0, 600.0, 0.0,
+				0.0, 800.0, 600.0);
 		engine.eventBus.fireEvent(new EventMapUpdated());
 	};
 };
