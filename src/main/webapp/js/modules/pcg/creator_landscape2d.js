@@ -18,8 +18,6 @@ CreatorLandscape2D.prototype.create = function(streamSource) {
 	var width = this.context.width;
 	var height = this.context.height;
 
-	log("lsc width: " + width);
-	log("lsc height: " + height);
 	// var tilesize = this.context.tilesize;
 	// var projectionMode = this.context.projectionMode;
 	var map = this.context.map;
