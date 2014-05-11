@@ -15,6 +15,7 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 		scope, action, map, mirrorMode, mirrorLine) {
 
 	var mapArray = map.mapArray;
+	var mirrorModeHelper = new MirrorModeHelper(mirrorMode, mirrorLine, mapArray.length);
 
 	var indexTop;
 	var indexBottom;
@@ -29,21 +30,14 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 	var maxIndexX = mapArray[0].length - 1;
 	var maxIndexY = mapArray.length - 1;
 
-	var line = new Object();
-	if (mirrorLine > maxIndexY) {
-		var offsetX = mirrorLine - maxIndexY;
-		line.point1X = offsetX;
-		line.point1Y = 0;
-		line.point2X = maxIndexX - offsetX;
-		line.point2Y = maxIndexY;
-	} else {
-		line.point1X = 0;
-		line.point1Y = mirrorLine;
-		line.point2X = maxIndexX;
-		line.point2Y = maxIndexY - mirrorLine;
-	}
+	var line = mirrorModeHelper.getLine();
+	log("mirror line (" + mirrorLine + ") from " + line.point1X + "/" + line.point1Y + " to " + line.point2X + "/" + line.point2Y);
 
 	vertical: for (indexY = 0; indexY <= maxIndexY; indexY++) {
+
+		if (mirrorModeHelper.isIndexYMirrored(indexY, line)) {
+			break vertical;
+		}
 
 		indexTop = indexY - 1;
 		indexBottom = indexY + 1;
@@ -55,48 +49,13 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 
 		horizontal: for (indexX = 0; indexX <= maxIndexX; indexX++) {
 
-			if (MIRRORMODE_AXIS == mirrorMode) {
-				if (0 == mirrorLine) {
-					if (indexY > (mapArray.length / 2)) {
-						break;
-					} else {
-						mirrorIndexX = indexX;
-						mirrorIndexY = maxIndexY - indexY;
-					}
-				} else if (1 == mirrorLine) {
-					if (indexX > (mapArray[indexY].length / 2)) {
-						continue vertical;
-					} else {
-						mirrorIndexX = maxIndexX - indexX;
-						mirrorIndexY = indexY;
-					}
-				} else if (2 == mirrorLine) {
-					if (indexX > indexY) {
-						continue vertical;
-					} else {
-						mirrorIndexX = indexY;
-						mirrorIndexY = indexX;
-					}
-				} else if (3 == mirrorLine) {
-					if (indexX > (mapArray.length - indexY)) {
-						continue vertical;
-					} else {
-						mirrorIndexX = maxIndexY - indexY;
-						mirrorIndexY = maxIndexX - indexX;
-					}
-				}
-			} else {
-				if (((line.point1Y <= indexY) || (line.point2Y <= indexY))
-						&& ((line.point1X <= indexX) || (line.point2X <= indexX))) {
-
-					// FIXME: Probably there is a way to determine when we can
-					// continue vertical instead, which would be more efficient.
-					continue horizontal;
-				} else {
-					mirrorIndexX = maxIndexY - indexX;
-					mirrorIndexY = maxIndexX - indexY;
-				}
+			if (mirrorModeHelper.isPointMirrored(indexX, indexY, line)) {
+				continue horizontal;
 			}
+
+			var mirroredPoint = mirrorModeHelper.getMirroredPoint(indexX, indexY);
+			mirrorIndexX = mirroredPoint.indexX;
+			mirrorIndexY = mirroredPoint.indexY;
 
 			indexLeft = indexX - 1;
 			indexRight = indexX + 1;
@@ -132,6 +91,8 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 		}
 	}
 };
+
+
 
 ForeachTileHelper.prototype.setLowestValue = function(streamSource,
 		map, indexX, indexY, mirrorIndexX, mirrorIndexY, maxValue, minValue,

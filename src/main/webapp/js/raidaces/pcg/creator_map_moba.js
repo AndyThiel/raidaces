@@ -51,13 +51,15 @@ CreatorMapMoba.prototype.createCheckedRaiseAndLowerAction = function(doRaise,
 		if (1 == raiseLowerMap.mapArray[indexY][indexX]) {
 			if (doRaise) {
 				map.mapArray[indexY][indexX] = currentValue + 1;
+				map.mapArray[mirrorIndexY][mirrorIndexX] = currentValue + 1;
 			} else {
 				map.mapArray[indexY][indexX] = currentValue - 1;
+				map.mapArray[mirrorIndexY][mirrorIndexX] = currentValue - 1;
 			}
 		}
 	};
 };
 
 CreatorMapMoba.prototype.getUpdateStepCount = function() {
-	return 4;
+	return 1;
 };
