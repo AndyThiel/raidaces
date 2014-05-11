@@ -21,6 +21,8 @@ MirrorModeHelper.prototype.getLine = function() {
 	var maxIndexX = this.mapSize - 1;
 	var maxIndexY = this.mapSize - 1;
 
+	log("mirror line is " + this.mirrorLine);
+
 	if (this.mirrorLine > maxIndexY) {
 		var offsetX = this.mirrorLine - maxIndexY;
 		line.point1X = offsetX;
@@ -29,18 +31,26 @@ MirrorModeHelper.prototype.getLine = function() {
 		line.point2Y = maxIndexY;
 	} else {
 		line.point1X = 0;
-		line.point1Y = this.mirrorLine;
+		line.point1Y = maxIndexY - this.mirrorLine;
 		line.point2X = maxIndexX;
-		line.point2Y = maxIndexY - this.mirrorLine;
+		line.point2Y = this.mirrorLine;
 	}
 	return line;
 };
 
-MirrorModeHelper.prototype.isIndexYMirrored = function(indexY, existingLine) {
+MirrorModeHelper.prototype.isRowMirrored = function(indexY, existingLine) {
 
 	var line = existingLine;
 	if (!line) {
 		line = this.getLine();
+	}
+
+	if ((MIRRORMODE_AXIS == this.mirrorMode) || (MIRRORMODE_POINT == this.mirrorMode)) {
+		if (0 == this.mirrorLine) {
+			if (indexY > ((this.mapSize / 2) - 1)) {
+				return true;
+			}
+		}		
 	}
 
 	if (MIRRORMODE_POINT == this.mirrorMode) {
@@ -48,19 +58,12 @@ MirrorModeHelper.prototype.isIndexYMirrored = function(indexY, existingLine) {
 			return true;
 		}
 	}
-
-	if (MIRRORMODE_AXIS == this.mirrorMode) {
-		if (0 == this.mirrorLine) {
-			if (indexY > ((this.mapSize / 2) - 1)) {
-				return true;
-			}
-		}		
-	}
 };
 
 MirrorModeHelper.prototype.isPointMirrored = function(indexX, indexY, existingLine) {
 
-	if (MIRRORMODE_AXIS == this.mirrorMode) {
+	// if (MIRRORMODE_AXIS == this.mirrorMode) {
+	if ((MIRRORMODE_AXIS == this.mirrorMode) || (MIRRORMODE_POINT == this.mirrorMode)) {
 
 		if (1 == this.mirrorLine) {
 			if (indexX > ((this.mapSize / 2) - 1)) {
@@ -69,13 +72,20 @@ MirrorModeHelper.prototype.isPointMirrored = function(indexX, indexY, existingLi
 		} else if (2 == this.mirrorLine) {
 			if (indexX > indexY) {
 				return true;
+			} else if ((MIRRORMODE_POINT == this.mirrorMode)
+					&& (indexX == indexY)
+					&& (indexX > ((this.mapSize / 2) - 1))) {
+				return true;
 			}
 		} else if (3 == this.mirrorLine) {
-			if (indexX > ((this.mapSize - indexY) - 1)) {
+			if (indexX > (this.mapSize - 1 - indexY)) {
+				return true;
+			} else if ((MIRRORMODE_POINT == this.mirrorMode)
+					&& (indexX == (this.mapSize - 1 - indexY))
+					&& (indexX <= ((this.mapSize / 2) - 1))) {
 				return true;
 			}
 		}
-
 	} else {
 
 		var maxIndexX = this.mapSize - 1;
@@ -93,8 +103,8 @@ MirrorModeHelper.prototype.isPointMirrored = function(indexX, indexY, existingLi
 		} else if (0 == line.point1Y) {
 
 			// Linear function to determine if we are in the mirrored area
-			var diff = line.point2X - line.point1X;
-			var slope = (maxIndexX + 1) / diff;
+//			var diff = line.point2X - line.point1X;
+//			var slope = (maxIndexX + 1) / diff;
 			// var offset = ; // ...
 
 //			if (!this.logged) {
@@ -106,7 +116,7 @@ MirrorModeHelper.prototype.isPointMirrored = function(indexX, indexY, existingLi
 //			}
 
 //			if (indexY > (slope * indexX + offset)) {
-//				continue vertical;
+//				return true;
 //			}
 
 		} else if (0 == line.point1X) {
@@ -116,16 +126,16 @@ MirrorModeHelper.prototype.isPointMirrored = function(indexX, indexY, existingLi
 			var slope = diff / (maxIndexY + 1);
 			var offset = line.point1Y; // ...
 
-			if (!this.logged && (indexX == Math.floor(maxIndexX / 2))) {
+			if (!this.logged && (indexX == Math.round(maxIndexX / 2))) {
 				log("diff: " + diff);
 				log("slope: " + slope);
 				log("offset: " + offset);
-				log("comparison: " + indexY + " - " + Math.floor((slope * indexX) + offset));
+				log("indexX: " + indexX);
+				log("comparison: " + indexY + " - " + (Math.floor(slope * indexX) + offset));
 				this.logged = true;
 			}
 
-			if (indexY > Math.floor((slope * indexX) + offset)) {
-				// log("Terminating at index X: " + indexX + " and Y: " + indexY + " with function value: " + ((slope * indexX) + offset));
+			if (indexY > (Math.floor(slope * indexX) + offset)) {
 				return true;
 			}
 		}

@@ -47,7 +47,6 @@ CreatorMapMoba.prototype.createCheckedRaiseAndLowerAction = function(doRaise,
 			neighborBottomLeft, neighborBottomCenter, neighborBottomRight) {
 
 		var currentValue = map.mapArray[indexY][indexX];
-
 		if (1 == raiseLowerMap.mapArray[indexY][indexX]) {
 			if (doRaise) {
 				map.mapArray[indexY][indexX] = currentValue + 1;
@@ -61,5 +60,5 @@ CreatorMapMoba.prototype.createCheckedRaiseAndLowerAction = function(doRaise,
 };
 
 CreatorMapMoba.prototype.getUpdateStepCount = function() {
-	return 1;
+	return 4;
 };

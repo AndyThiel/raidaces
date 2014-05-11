@@ -52,12 +52,26 @@ CreatorMap2D.prototype.updateMirrorMode = function(streamSource) {
 	if (MIRRORMODE_RANDOM == this.mirrorMode) {
 		if (streamSource.consumeBoolean()) {
 			this.mirrorMode = MIRRORMODE_AXIS;
-			this.mirrorLine = streamSource.consumeShort() % 4;
+			this.mirrorLine = streamSource.consumeShort() % 2;
 			log("AXIS Symmetry");
 		} else {
 			this.mirrorMode = MIRRORMODE_POINT;
-			this.mirrorLine = streamSource.consumeInt()
-					% ((this.context.width - 1) + (this.context.height - 1));
+
+			// Values for not so steep lines
+			// this.mirrorLine = (streamSource.consumeInt() %
+			// (this.context.height - 1));
+
+			// Values for steep lines
+			// this.mirrorLine = (this.context.width - 1)
+			// + (streamSource.consumeInt() % (this.context.height - 1));
+
+			// Values for steep and not so steep lines
+			// this.mirrorLine = streamSource.consumeInt()
+			// % ((this.context.width - 1) + (this.context.height - 1));
+
+			// Use the same lines as the ones for axis symmetry
+			this.mirrorLine = streamSource.consumeShort() % 4;
+
 			log("POINT Symmetry");
 		}
 	}
