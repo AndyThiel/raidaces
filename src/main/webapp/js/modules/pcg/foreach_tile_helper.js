@@ -103,16 +103,6 @@ ForeachTileHelper.prototype.setLowestValue = function(streamSource,
 	map.mapArray[indexY][indexX] = 0;
 	map.mapArray[mirrorIndexY][mirrorIndexX] = 0;
 };
-
-ForeachTileHelper.prototype.setLowestValue = function(streamSource,
-		map, indexX, indexY, mirrorIndexX, mirrorIndexY, maxValue, minValue,
-		neighborTopLeft, neighborTopCenter, neighborTopRight, neighborLeft,
-		neighborRight, neighborBottomLeft, neighborBottomCenter,
-		neighborBottomRight) {
-
-	map.mapArray[indexY][indexX] = 0;
-	map.mapArray[mirrorIndexY][mirrorIndexX] = 0;
-};
 ForeachTileHelper.prototype.setMiddleValue = function(streamSource,
 		map, indexX, indexY, mirrorIndexX, mirrorIndexY, maxValue, minValue,
 		neighborTopLeft, neighborTopCenter, neighborTopRight, neighborLeft,
