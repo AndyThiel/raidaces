@@ -50,7 +50,7 @@ CreatorMap2D.prototype.updateMirrorMode = function(streamSource) {
 	this.mirrorLine = this.context.mirrorLine;
 
 	if (MIRRORMODE_RANDOM == this.mirrorMode) {
-		if (false) {//streamSource.consumeBoolean()) {
+		if (streamSource.consumeBoolean()) {
 			this.mirrorMode = MIRRORMODE_AXIS;
 			this.mirrorLine = streamSource.consumeShort() % 4;
 			log("AXIS Symmetry");

@@ -149,16 +149,16 @@ MirrorModeHelper.prototype.getMirroredPointAxisSymmetry = function(indexX, index
 	var maxIndexX = this.mapSize - 1;
 	var maxIndexY = this.mapSize - 1;
 
-	if (0 == mirrorLine) {
+	if (0 == this.mirrorLine) {
 		point.indexX = indexX;
 		point.indexY = maxIndexY - indexY;
-	} else if (1 == mirrorLine) {
+	} else if (1 == this.mirrorLine) {
 		point.indexX = maxIndexX - indexX;
 		point.indexY = indexY;
-	} else if (2 == mirrorLine) {
+	} else if (2 == this.mirrorLine) {
 		point.indexX = indexY;
 		point.indexY = indexX;
-	} else if (3 == mirrorLine) {
+	} else if (3 == this.mirrorLine) {
 		point.indexX = maxIndexY - indexY;
 		point.indexY = maxIndexX - indexX;
 	} else {
