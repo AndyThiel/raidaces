@@ -15,7 +15,13 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 		scope, action, map, mirrorMode, mirrorLine) {
 
 	var mapArray = map.mapArray;
-	var mirrorModeHelper = new MirrorModeHelper(mirrorMode, mirrorLine, mapArray.length);
+	var mirrorModeHelper;
+	if (MIRRORMODE_AXIS == mirrorMode) {
+		mirrorModeHelper = new MirrorModeHelperAxis(mirrorLine, mapArray.length);
+	} else {
+		mirrorModeHelper = new MirrorModeHelperPoint(mirrorLine, mapArray.length);
+		log(mirrorModeHelper.getLogInfo(mapArray[0].length / 2, 79));
+	}
 
 	var indexTop;
 	var indexBottom;
@@ -30,12 +36,9 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 	var maxIndexX = mapArray[0].length - 1;
 	var maxIndexY = mapArray.length - 1;
 
-	var line = mirrorModeHelper.getLine();
-	log("mirror line (" + mirrorLine + ") from " + line.point1X + "/" + line.point1Y + " to " + line.point2X + "/" + line.point2Y);
-
 	vertical: for (indexY = 0; indexY <= maxIndexY; indexY++) {
 
-		if (mirrorModeHelper.isRowMirrored(indexY, line)) {
+		if (mirrorModeHelper.isRowMirrored(indexY)) {
 			break vertical;
 		}
 
@@ -49,7 +52,7 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 
 		horizontal: for (indexX = 0; indexX <= maxIndexX; indexX++) {
 
-			if (mirrorModeHelper.isPointMirrored(indexX, indexY, line)) {
+			if (mirrorModeHelper.isPointMirrored(indexX, indexY)) {
 				continue horizontal;
 			}
 

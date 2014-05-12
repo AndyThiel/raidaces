@@ -98,7 +98,10 @@ GameStateLoading.prototype.init = function() {
 						|| (indexMapX >= left && indexMapX <= right && (left == indexMapY || right == indexMapY))) {
 					mapContext.strokeStyle = "#FFFFFF";
 				} else {
-					if (0 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
+					if (typeof this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX] === 'undefined') {
+						log("undefined at: " + indexMapX + "/" + indexMapY);
+						mapContext.strokeStyle = "#FF00FF";
+					} else if (0 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
 						mapContext.strokeStyle = "#7777AA";
 					} else if (1 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
 						mapContext.strokeStyle = "#77AA77";
@@ -108,6 +111,9 @@ GameStateLoading.prototype.init = function() {
 						mapContext.strokeStyle = "#99CC99";
 					} else if (4 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
 						mapContext.strokeStyle = "#AADDAA";
+					} else {
+						log("unsupported (" + this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX] + ") at: " + indexMapX + "/" + indexMapY);
+						mapContext.strokeStyle = "#FF00FF";
 					}
 				}
 				mapContext.stroke();
@@ -287,11 +293,11 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 			var heightStep = tileSize * 3 / 4;
 
 			var height = landscapeArray[indexY][indexX];
-			// if (height) {
+			if (typeof height === 'undefined') {
+				height = 0;
+			} else {
 				height -= 2;
-			// } else {
-			//	height = 0;
-			// }
+			}
 			var heightOffset = height * heightStep;
 
 			var posX = indexX * tileSize;
@@ -406,6 +412,8 @@ GameStateLoading.prototype.getFillStyle = function(tileValue) {
 		return "#99CC99";
 	} else if (2 == tileValue) {
 		return "#AADDAA";
+	} else {
+		return "#FF00FF";
 	}
 	throw "error_unhandled_tile_value " + tileValue;
 };
