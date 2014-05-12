@@ -113,7 +113,7 @@ GameStateLoading.prototype.init = function() {
 						mapContext.strokeStyle = "#AADDAA";
 					} else {
 						log("unsupported (" + this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX] + ") at: " + indexMapX + "/" + indexMapY);
-						mapContext.strokeStyle = "#FF00FF";
+						mapContext.strokeStyle = "#00FF00";
 					}
 				}
 				mapContext.stroke();
@@ -413,7 +413,7 @@ GameStateLoading.prototype.getFillStyle = function(tileValue) {
 	} else if (2 == tileValue) {
 		return "#AADDAA";
 	} else {
-		return "#FF00FF";
+		return "#00FF00";
 	}
 	throw "error_unhandled_tile_value " + tileValue;
 };

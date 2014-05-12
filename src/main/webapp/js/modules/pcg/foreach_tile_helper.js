@@ -20,7 +20,7 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 		mirrorModeHelper = new MirrorModeHelperAxis(mirrorLine, mapArray.length);
 	} else {
 		mirrorModeHelper = new MirrorModeHelperPoint(mirrorLine, mapArray.length);
-		log(mirrorModeHelper.getLogInfo(mapArray[0].length / 2, 79));
+		// log(mirrorModeHelper.getLogInfo(mapArray[0].length / 2, 79));
 	}
 
 	var indexTop;
