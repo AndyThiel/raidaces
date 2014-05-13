@@ -1,5 +1,9 @@
 var engine = new Engine();
 
+function resetLog() {
+	var debugArea = document.getElementById('debugArea');
+	debugArea.innerHTML = '';
+}
 function log(message) {
 	var debugArea = document.getElementById('debugArea');
 	debugArea.innerHTML += ('<br>' + message);
@@ -18,12 +22,12 @@ function initEngine(gameContext) {
 }
 
 /*
- * This should be changed later ... the resource creation should be
- * done in a loading gamestate while this initialization should just register
- * the gamestates.
- *
- * TODO Move the theme whitelist over to the landscape generator to keep the
- * map generator theme-neutral.
+ * This should be changed later ... the resource creation should be done in a
+ * loading gamestate while this initialization should just register the
+ * gamestates.
+ * 
+ * TODO Move the theme whitelist over to the landscape generator to keep the map
+ * generator theme-neutral.
  */
 function initGame(gameContext, hiddenContentArea) {
 
@@ -34,6 +38,21 @@ function initGame(gameContext, hiddenContentArea) {
 	var eventsModule = engine.getModule("events");
 	log("Rendering Map, please be patient!");
 	eventsModule.changeGameState(new GameStateLoading(engine));
+}
+
+function restart(gameContext, hiddenContentArea) {
+	resetLog();
+	if (engine.isRunning) {
+		engine.stop();
+	}
+	if (engine.isInitialized) {
+		engine.uninit();
+	}
+	engine = new Engine();
+	initEngine(gameContext);
+	initGame(gameContext, hiddenContentArea);
+	toggleRunning();
+
 }
 
 function toggleRunning() {
