@@ -5,6 +5,8 @@ function CreatorMapMoba() {
 	CreatorMap2D.apply(this, []);
 	this.creatorRaiseLowerMap = new CreatorMap2D();
 	this.creatorRaiseLowerMapContext = new CreatorMap2DContext();
+	// this.creatorBase = new CreatorMobaBase();
+	// this.creatorBaseContext = new CreatorMobaBaseContext();
 }
 
 CreatorMapMoba.prototype = Object.create(CreatorMap2D.prototype);
