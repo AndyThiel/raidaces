@@ -1,3 +1,5 @@
+var MIRRORLINE_DEFAULT = -1;
+
 //
 // MirrorModeHelperPoint
 //
@@ -15,6 +17,10 @@ MirrorModeHelperPoint.prototype.constructor = MirrorModeHelperPoint;
 //
 
 MirrorModeHelperPoint.prototype.getLogInfo = function(indexX, indexY) {
+
+	if (MIRRORLINE_DEFAULT == this.mirrorLine) {
+		return "Using horizontal line.";
+	}
 
 	if (typeof this.line === 'undefined') {
 		this.line = this.getCartesianLine();
@@ -35,6 +41,10 @@ MirrorModeHelperPoint.prototype.getLogInfo = function(indexX, indexY) {
 
 MirrorModeHelperPoint.prototype.isRowMirrored = function(indexY) {
 
+	if (MIRRORLINE_DEFAULT == this.mirrorLine) {
+		return indexY > ((this.mapSize / 2) - 1);
+	}
+
 	if (typeof this.line === 'undefined') {
 		this.line = this.getCartesianLine();
 	}
@@ -43,10 +53,6 @@ MirrorModeHelperPoint.prototype.isRowMirrored = function(indexY) {
 	var diffY = this.line.point2Y - this.line.point1Y;
 	var slope = diffY / diffX;
 
-	// Why does this not work? A lot of points stay undefined, but when this
-	// occurs all the unmirrored points should have been drawn.
-	// Maybe it depends on the slope ... because the first lines are skipped
-	// and the later ones handled due to the slope > 0 check!?
 	if ((slope > -1 && slope < 0)
 			&& ((this.indexYToCartesian(indexY) > this.line.point1Y) && (this.indexYToCartesian(indexY) > this.line.point2Y))) {
 		return true;
@@ -54,18 +60,17 @@ MirrorModeHelperPoint.prototype.isRowMirrored = function(indexY) {
 			&& ((this.indexYToCartesian(indexY) < this.line.point1Y) && (this.indexYToCartesian(indexY) < this.line.point2Y))) {
 		return true;		
 	}
-//	} else if ((slope < 0)
-//			&& ((this.indexYToCartesian(indexY) < this.line.point1X) && (this
-//					.indexYToCartesian(indexY) < this.line.point2Y))) {
-//		return true;
-//	}
 	return false;
 };
 
 MirrorModeHelperPoint.prototype.isPointMirrored = function(indexX, indexY) {
 
+	if (MIRRORLINE_DEFAULT == this.mirrorLine) {
+		return this.isRowMirrored(indexY);
+	}
+
 	if (typeof this.line === 'undefined') {
-		this.line = this.getLine();
+		this.line = this.getCartesianLine();
 	}
 
 	var line = this.line;

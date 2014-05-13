@@ -58,16 +58,19 @@ CreatorMap2D.prototype.updateMirrorMode = function(streamSource) {
 			this.mirrorMode = MIRRORMODE_POINT;
 
 			// Values for not so steep lines
-//			 this.mirrorLine = (streamSource.consumeInt() %
-//			 (this.context.height - 1));
+			// this.mirrorLine = (streamSource.consumeInt() %
+			// (this.context.height - 1));
 
 			// Values for steep lines
-//			 this.mirrorLine = (this.context.width - 1)
-//			 + (streamSource.consumeInt() % (this.context.height - 1));
+			// this.mirrorLine = (this.context.width - 1)
+			// + (streamSource.consumeInt() % (this.context.height - 1));
 
 			// Values for steep and not so steep lines
-			 this.mirrorLine = streamSource.consumeInt()
-			 % ((this.context.width - 1) + (this.context.height - 1));
+			// this.mirrorLine = streamSource.consumeInt()
+			// % ((this.context.width - 1) + (this.context.height - 1));
+
+			// Value for simple implementation
+			this.mirrorLine = MIRRORLINE_DEFAULT;
 
 			log("POINT Symmetry");
 		}
