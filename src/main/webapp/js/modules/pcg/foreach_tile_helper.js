@@ -39,7 +39,7 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 	vertical: for (indexY = 0; indexY <= maxIndexY; indexY++) {
 
 		if (mirrorModeHelper.isRowMirrored(indexY)) {
-			break vertical;
+			continue vertical;
 		}
 
 		indexTop = indexY - 1;

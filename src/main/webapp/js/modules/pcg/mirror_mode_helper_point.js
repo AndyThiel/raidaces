@@ -39,13 +39,26 @@ MirrorModeHelperPoint.prototype.isRowMirrored = function(indexY) {
 		this.line = this.getCartesianLine();
 	}
 
+	var diffX = this.line.point2X - this.line.point1X;
+	var diffY = this.line.point2Y - this.line.point1Y;
+	var slope = diffY / diffX;
+
 	// Why does this not work? A lot of points stay undefined, but when this
 	// occurs all the unmirrored points should have been drawn.
 	// Maybe it depends on the slope ... because the first lines are skipped
 	// and the later ones handled due to the slope > 0 check!?
-	// if (indexY > this.line.point1Y && indexY > this.line.point2Y) {
-		// return true;
-	// }
+	if ((slope > -1 && slope < 0)
+			&& ((this.indexYToCartesian(indexY) > this.line.point1Y) && (this.indexYToCartesian(indexY) > this.line.point2Y))) {
+		return true;
+	} else if ((slope > 0 && slope < 1)
+			&& ((this.indexYToCartesian(indexY) < this.line.point1Y) && (this.indexYToCartesian(indexY) < this.line.point2Y))) {
+		return true;		
+	}
+//	} else if ((slope < 0)
+//			&& ((this.indexYToCartesian(indexY) < this.line.point1X) && (this
+//					.indexYToCartesian(indexY) < this.line.point2Y))) {
+//		return true;
+//	}
 	return false;
 };
 
@@ -72,12 +85,12 @@ MirrorModeHelperPoint.prototype.isPointMirrored = function(indexX, indexY) {
 		var offset = this.calculateOffset(line.point1X, line.point1Y, slope);
 
 		if ((slope > 0)
-				&& (this.indexYToCartesian(indexY) < Math.floor((slope * this
+				&& (this.indexYToCartesian(indexY) <= Math.floor((slope * this
 						.indexXToCartesian(indexX))
 						+ offset))) {
 			return true;
 		} else if ((slope < 0)
-				&& (this.indexYToCartesian(indexY) > Math.floor((slope * this
+				&& (this.indexYToCartesian(indexY) >= Math.ceil((slope * this
 						.indexXToCartesian(indexX))
 						+ offset))) {
 			return true;
