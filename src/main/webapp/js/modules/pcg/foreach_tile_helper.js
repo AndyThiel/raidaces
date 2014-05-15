@@ -19,7 +19,8 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 	if (MIRRORMODE_AXIS == mirrorMode) {
 		mirrorModeHelper = new MirrorModeHelperAxis(mirrorLine, mapArray.length);
 	} else {
-		mirrorModeHelper = new MirrorModeHelperPoint(mirrorLine, mapArray.length);
+		mirrorModeHelper = new MirrorModeHelperPoint(mirrorLine,
+				mapArray.length);
 		// log(mirrorModeHelper.getLogInfo(mapArray[0].length / 2, 79));
 	}
 
@@ -56,7 +57,8 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 				continue horizontal;
 			}
 
-			var mirroredPoint = mirrorModeHelper.getMirroredPoint(indexX, indexY);
+			var mirroredPoint = mirrorModeHelper.getMirroredPoint(indexX,
+					indexY);
 			mirrorIndexX = mirroredPoint.indexX;
 			mirrorIndexY = mirroredPoint.indexY;
 
@@ -95,10 +97,107 @@ ForeachTileHelper.prototype.forEachPixelToUpdate = function(streamSource,
 	}
 };
 
+ForeachTileHelper.prototype.addMirrored = function(streamSource, sourceArray,
+		targetMap, targetIndexX, targetIndexY, mirrorMode, mirrorLine) {
 
+	var mapArray = targetMap.mapArray;
+	var mirrorModeHelper;
+	if (MIRRORMODE_AXIS == mirrorMode) {
+		mirrorModeHelper = new MirrorModeHelperAxis(mirrorLine, mapArray.length);
+	} else {
+		mirrorModeHelper = new MirrorModeHelperPoint(mirrorLine,
+				mapArray.length);
+		// log(mirrorModeHelper.getLogInfo(mapArray[0].length / 2, 79));
+	}
 
-ForeachTileHelper.prototype.setLowestValue = function(streamSource,
-		map, indexX, indexY, mirrorIndexX, mirrorIndexY, maxValue, minValue,
+	var indexX;
+	var indexY;
+	for (indexY = 0; indexY < sourceArray.length; indexY++) {
+		for (indexX = 0; indexX < sourceArray[indexY].length; indexX++) {
+
+			var newHeightValue = sourceArray[indexY][indexX];
+
+			var mapIndexX = targetIndexX + indexX;
+			var mapIndexY = targetIndexY + indexY;
+			var mirroredPoint = mirrorModeHelper.getMirroredPoint(mapIndexX,
+					mapIndexY);
+
+			mapArray[targetIndexY + indexY][targetIndexX + indexX] = newHeightValue;
+			mapArray[mirroredPoint.indexY][mirroredPoint.indexX] = newHeightValue;
+		}
+	}
+};
+
+ForeachTileHelper.prototype.addLines = function(streamSource, pointArray, map,
+		mirrorMode, mirrorLine) {
+
+	var previousPoint = pointArray[0];
+	var mirrorModeHelper;
+	if (MIRRORMODE_AXIS == mirrorMode) {
+		mirrorModeHelper = new MirrorModeHelperAxis(mirrorLine,
+				map.mapArray.width);
+	} else {
+		mirrorModeHelper = new MirrorModeHelperPoint(mirrorLine,
+				map.mapArray.width);
+		// log(mirrorModeHelper.getLogInfo(mapArray[0].length / 2, 79));
+	}
+
+	var currentPointIndex;
+	for (currentPointIndex = 1; currentPointIndex < pointArray.length; currentPointIndex++) {
+
+		var currentPoint = pointArray[currentPointIndex];
+
+		var diffX = currentPoint.indexX - previousPoint.indexX;
+		var diffY = currentPoint.indexY - previousPoint.indexY;
+
+		var slope = diffY / diffX;
+		var offset = Math.floor(-1
+				* ((previousPoint.indexX * slope) - previousPoint.indexY));
+
+		var minX = Math.min(previousPoint.indexX, currentPoint.indexX);
+		var maxX = Math.max(previousPoint.indexX, currentPoint.indexX);
+		// var minY = Math.min(previousPoint.indexY, currentPoint.indexY);
+		// var maxY = Math.max(previousPoint.indexY, currentPoint.indexY);
+
+		if (typeof previousPoint.indexX === 'undefined'
+				|| typeof currentPoint.indexX === 'undefined') {
+			log("Not drawing corrupt line.");
+		} else {
+			log("Drawing line with slope: " + slope + " and offset: " + offset
+					+ " (from " + previousPoint.indexX + "/"
+					+ previousPoint.indexY + " to " + currentPoint.indexX + "/"
+					+ currentPoint.indexY + ")");
+			var indexX;
+			for (indexX = minX; indexX < maxX; indexX++) {
+
+				var indexY = Math.floor(slope * indexX) + offset;
+				var mirroredPoint = mirrorModeHelper.getMirroredPoint(indexX,
+						indexY);
+
+				map.mapArray[indexY][indexX] = 4;
+				if (typeof mirroredPoint === 'undefined'
+						|| typeof mirroredPoint.indexX === 'undefined'
+						|| typeof mirroredPoint.indexY === 'undefined') {
+					log("MirroredPoint corrupt");
+				} else {
+					log(typeof mirroredPoint);
+					log(typeof mirroredPoint.indexX);
+					log(typeof mirroredPoint.indexY);
+					log("MirroredPoint: " + mirroredPoint.indexX + "/"
+							+ mirroredPoint.indexY);
+					if (typeof map.mapArray[mirroredPoint.indexY] === 'undefined') {
+						log("Mirrored Point fail");
+					} else {
+						map.mapArray[mirroredPoint.indexY][mirroredPoint.indexX] = 4;
+					}
+				}
+			}
+		}
+	}
+};
+
+ForeachTileHelper.prototype.setLowestValue = function(streamSource, map,
+		indexX, indexY, mirrorIndexX, mirrorIndexY, maxValue, minValue,
 		neighborTopLeft, neighborTopCenter, neighborTopRight, neighborLeft,
 		neighborRight, neighborBottomLeft, neighborBottomCenter,
 		neighborBottomRight) {
@@ -106,8 +205,8 @@ ForeachTileHelper.prototype.setLowestValue = function(streamSource,
 	map.mapArray[indexY][indexX] = 0;
 	map.mapArray[mirrorIndexY][mirrorIndexX] = 0;
 };
-ForeachTileHelper.prototype.setMiddleValue = function(streamSource,
-		map, indexX, indexY, mirrorIndexX, mirrorIndexY, maxValue, minValue,
+ForeachTileHelper.prototype.setMiddleValue = function(streamSource, map,
+		indexX, indexY, mirrorIndexX, mirrorIndexY, maxValue, minValue,
 		neighborTopLeft, neighborTopCenter, neighborTopRight, neighborLeft,
 		neighborRight, neighborBottomLeft, neighborBottomCenter,
 		neighborBottomRight) {
@@ -115,8 +214,8 @@ ForeachTileHelper.prototype.setMiddleValue = function(streamSource,
 	map.mapArray[indexY][indexX] = 2;
 	map.mapArray[mirrorIndexY][mirrorIndexX] = 2;
 };
-ForeachTileHelper.prototype.setHighestValue = function(streamSource,
-		map, indexX, indexY, mirrorIndexX, mirrorIndexY, maxValue, minValue,
+ForeachTileHelper.prototype.setHighestValue = function(streamSource, map,
+		indexX, indexY, mirrorIndexX, mirrorIndexY, maxValue, minValue,
 		neighborTopLeft, neighborTopCenter, neighborTopRight, neighborLeft,
 		neighborRight, neighborBottomLeft, neighborBottomCenter,
 		neighborBottomRight) {
@@ -201,20 +300,20 @@ ForeachTileHelper.prototype.mildHeightCellularAutomationAction = function(
 		neighborTopRight, neighborLeft, neighborRight, neighborBottomLeft,
 		neighborBottomCenter, neighborBottomRight) {
 
-//	var blockIncrement = false;
+	// var blockIncrement = false;
 	var newValue;
 
 	if (neighborLeft < map.mapArray[indexY][indexX]) {
 		newValue = neighborLeft;
 		if (neighborRight > map.mapArray[indexY][indexX]) {
 			newValue++;
-//			blockIncrement = true;
+			// blockIncrement = true;
 		}
 	} else if (neighborLeft > map.mapArray[indexY][indexX]) {
 		newValue = neighborRight;
 		if (neighborRight < map.mapArray[indexY][indexX]) {
 			newValue++;
-//			blockIncrement = true;
+			// blockIncrement = true;
 		}
 	} else {
 		newValue = neighborLeft;
