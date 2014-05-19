@@ -1,5 +1,6 @@
-var engine = new Engine();
-
+//
+// TODO Decide: should this be a class, e.g. RaidacesRunner
+//
 function resetLog() {
 	var debugArea = document.getElementById('debugArea');
 	debugArea.innerHTML = '';
@@ -10,6 +11,22 @@ function log(message) {
 }
 
 function initEngine(gameContext) {
+
+	gameContext.beginPath();
+	gameContext.rect(0, 0, 800, 600);
+	gameContext.fillStyle = "#88BB88";
+	gameContext.fill();
+	gameContext.font = "bold 16px sans-serif";
+	gameContext.fillStyle = "#FFFFFF";
+	gameContext.fillText("Loading", 350, 294);
+
+	mapContext.beginPath();
+	mapContext.rect(0, 0, mapCanvas.width, mapCanvas.height);
+	mapContext.fillStyle = "#88BB88";
+	mapContext.fill();
+	mapContext.font = "bold 10px sans-serif";
+	mapContext.fillStyle = "#FFFFFF";
+	mapContext.fillText("Loading", (mapCanvas.width / 2) - 12, (mapCanvas.height / 2) - 2);
 
 	engine.registerCoreModules(gameContext);
 	log("finished registering core modules");
@@ -29,7 +46,7 @@ function initEngine(gameContext) {
  * TODO Move the theme whitelist over to the landscape generator to keep the map
  * generator theme-neutral.
  */
-function initGame(gameContext, hiddenContentArea) {
+function initGame(gameContext) {
 
 	if (!engine.isInitialized) {
 		throw "error_engine_not_initialized";
@@ -52,7 +69,6 @@ function restart(gameContext, hiddenContentArea) {
 	initEngine(gameContext);
 	initGame(gameContext, hiddenContentArea);
 	toggleRunning();
-
 }
 
 function toggleRunning() {

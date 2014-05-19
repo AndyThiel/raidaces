@@ -2,17 +2,16 @@
 // GamestateLoading
 //
 function GameStateLoading(gamestateEngine) {
+
 	AbstractGameState.apply(this, arguments);
 
 	this.MAPSIZE = mapCanvas.width;
 	this.TILESIZE = 32;
 	this.ACTUALLY_DO_STUFF = true;
 
-	this.creatorThemeWhitelist;
 	this.creatorMap;
 	this.creatorLandscape;
 
-	this.creatorThemeWhitelistContext = new CreatorThemeWhitelistContext();
 	this.creatorMapContext = new CreatorMapMobaContext();
 	this.creatorLandscapeContext = new CreatorLandscape2DContext();
 }
@@ -30,6 +29,7 @@ GameStateLoading.prototype.init = function() {
 		throw "error_gamestate_loading_already_initialized";
 	}
 
+	var hiddenContentArea = document.getElementById('hiddenContentArea');
 	this.initHiddenContentArea(hiddenContentArea);
 	log("finished initializing hidden content area");
 
@@ -43,28 +43,29 @@ GameStateLoading.prototype.init = function() {
 	// var streamSource = pcgModule.getStreamSourceFixed(201, 102);
 	log("stream source has been requested");
 
+	var creatorThemeWhitelist;
+
 	// Request creators for procedural generation
-	this.creatorThemeWhitelist = pcgModule.getCreatorThemeWhitelist();
+	creatorThemeWhitelist = pcgModule.getCreatorThemeWhitelist();
 	log("whitelist creator requested");
 	this.creatorMap = new CreatorMapMoba();
 	log("map creator requested");
 	this.creatorLandscape = pcgModule.getCreatorLandscape2D();
 	log("landscape creator requested");
 
+	var creatorThemeWhitelistContext = new CreatorThemeWhitelistContext();
 	// Register context objects
-	this.creatorThemeWhitelist.setContext(this.creatorThemeWhitelistContext);
+	creatorThemeWhitelist.setContext(creatorThemeWhitelistContext);
 	this.creatorMap.setContext(this.creatorMapContext);
 	this.creatorLandscape.setContext(this.creatorLandscapeContext);
 	log("context objects set");
 
 	// Init context objects for desired creation settings
-	this.creatorThemeWhitelistContext.registerThemes(this.creatorMap
-			.getThemes());
+	creatorThemeWhitelistContext.registerThemes(this.creatorMap.getThemes());
 	this.creatorMapContext.setDimensions(this.MAPSIZE, this.MAPSIZE); // Dimension
 	// in
 	// tiles
-	this.creatorLandscapeContext.setProjectionMode(PROJECTION_TOP);
-	// creatorLandscapeContext.setProjectionMode(PROJECTION_ISO);
+	this.creatorLandscapeContext.setProjectionMode(PROJECTION_ISO);
 	this.creatorLandscapeContext.setTilesize(this.TILESIZE); // Tile size in
 	// pixels
 	this.creatorLandscapeContext.setDimensions(16, 16); // Dimension in tiles
@@ -73,7 +74,7 @@ GameStateLoading.prototype.init = function() {
 	if (this.ACTUALLY_DO_STUFF) {
 
 		// Use the creators to populate more settings in the context objects
-		this.creatorMapContext.setThemeWhitelist(this.creatorThemeWhitelist
+		this.creatorMapContext.setThemeWhitelist(creatorThemeWhitelist
 				.create(streamSource));
 		log("Whitelist created");
 		this.creatorLandscapeContext.setMap(this.creatorMap
@@ -112,7 +113,9 @@ GameStateLoading.prototype.init = function() {
 					} else if (4 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
 						mapContext.strokeStyle = "#AADDAA";
 					} else {
-						log("unsupported (" + this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX] + ") at: " + indexMapX + "/" + indexMapY);
+						log("unsupported ("
+								+ this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]
+								+ ") at: " + indexMapX + "/" + indexMapY);
 						mapContext.strokeStyle = "#00FF00";
 					}
 				}
@@ -217,10 +220,12 @@ GameStateLoading.prototype.initHiddenContentArea = function(hiddenContentArea) {
 		hiddenContentArea.appendChild(landscapeMapImage);
 		hiddenContentArea.appendChild(landscapeNormalMapImage);
 		hiddenContentArea.appendChild(landscapeDepthMapImage);
-		if (6 == indexCurrentLandscape || 7 == indexCurrentLandscape || 8 == indexCurrentLandscape
-				|| 11 == indexCurrentLandscape || 12 == indexCurrentLandscape || 13 == indexCurrentLandscape
-				|| 16 == indexCurrentLandscape || 17 == indexCurrentLandscape || 18 == indexCurrentLandscape) {
-//			landscapeMapImage.className = "visible";
+		if (6 == indexCurrentLandscape || 7 == indexCurrentLandscape
+				|| 8 == indexCurrentLandscape || 11 == indexCurrentLandscape
+				|| 12 == indexCurrentLandscape || 13 == indexCurrentLandscape
+				|| 16 == indexCurrentLandscape || 17 == indexCurrentLandscape
+				|| 18 == indexCurrentLandscape) {
+			// landscapeMapImage.className = "visible";
 			landscapeMapImage.addEventListener('load', function() {
 				updateMap(gameContext);
 			}, false);
@@ -324,7 +329,7 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 				contextMap.stroke();
 			} else {
 				contextMap.strokeStyle = this.getFillStyle(height);
-				contextMap.stroke();				
+				contextMap.stroke();
 			}
 
 			var heightNeighborBottomCenter;
@@ -366,13 +371,14 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 					contextMap.stroke();
 				} else {
 					contextMap.strokeStyle = "#CC9966";
-					contextMap.stroke();				
+					contextMap.stroke();
 				}
 			}
 
 			if (height > heightNeighborRight) {
 
-				var cliffHeightOffset = (height - heightNeighborRight) * heightStep;
+				var cliffHeightOffset = (height - heightNeighborRight)
+						* heightStep;
 
 				contextMap.beginPath();
 				contextMap.moveTo(isoX, isoY + tileSize);
@@ -394,7 +400,7 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 					contextMap.stroke();
 				} else {
 					contextMap.strokeStyle = "#AA6644";
-					contextMap.stroke();				
+					contextMap.stroke();
 				}
 			}
 		}
@@ -437,43 +443,37 @@ function makeUpdateExecution() {
 
 	return function() {
 
-		gameContext.clearRect(0,0,800,600);
+		gameContext.clearRect(0, 0, 800, 600);
 
-		gameContext.drawImage(document.getElementById("imgMap6"),
-				0.0, 0.0, 1024.0, 1024.0,
-				-112.0, (-212.0 - 512.0), 1024.0, 1024.0);
+		gameContext.drawImage(document.getElementById("imgMap6"), 0.0, 0.0,
+				1024.0, 1024.0, -112.0, (-212.0 - 512.0), 1024.0, 1024.0);
 
-		gameContext.drawImage(document.getElementById("imgMap7"),
-				0.0, 0.0, 1024.0, 1024.0,
-				(-112.0 + 512.0), (-212.0 - 256.0), 1024.0, 1024.0);
+		gameContext.drawImage(document.getElementById("imgMap7"), 0.0, 0.0,
+				1024.0, 1024.0, (-112.0 + 512.0), (-212.0 - 256.0), 1024.0,
+				1024.0);
 
-		gameContext.drawImage(document.getElementById("imgMap8"),
-				0.0, 0.0, 1024.0, 1024.0,
-				(-112.0 + 1024.0), -212.0, 1024.0, 1024.0);
+		gameContext.drawImage(document.getElementById("imgMap8"), 0.0, 0.0,
+				1024.0, 1024.0, (-112.0 + 1024.0), -212.0, 1024.0, 1024.0);
 
-		gameContext.drawImage(document.getElementById("imgMap11"),
-				0.0, 0.0, 1024.0, 1024.0,
-				(-112.0 - 512.0), (-212.0 - 256.0), 1024.0, 1024.0);
+		gameContext.drawImage(document.getElementById("imgMap11"), 0.0, 0.0,
+				1024.0, 1024.0, (-112.0 - 512.0), (-212.0 - 256.0), 1024.0,
+				1024.0);
 
-		gameContext.drawImage(document.getElementById("imgMap12"),
-				0.0, 0.0, 1024.0, 1024.0,
-				-112.0, -212.0, 1024.0, 1024.0);
-		
-		gameContext.drawImage(document.getElementById("imgMap13"),
-				0.0, 0.0, 1024.0, 1024.0,
-				(-112.0 + 512.0), (-212.0 + 256.0), 1024.0, 1024.0);
+		gameContext.drawImage(document.getElementById("imgMap12"), 0.0, 0.0,
+				1024.0, 1024.0, -112.0, -212.0, 1024.0, 1024.0);
 
-		gameContext.drawImage(document.getElementById("imgMap16"),
-				0.0, 0.0, 1024.0, 1024.0,
-				-112.0 - 1024.0, -212.0, 1024.0, 1024.0);
+		gameContext.drawImage(document.getElementById("imgMap13"), 0.0, 0.0,
+				1024.0, 1024.0, (-112.0 + 512.0), (-212.0 + 256.0), 1024.0,
+				1024.0);
 
-		gameContext.drawImage(document.getElementById("imgMap17"),
-				0.0, 0.0, 1024.0, 1024.0,
-				-112.0 - 512.0, -212.0 + 256.0, 1024.0, 1024.0);
+		gameContext.drawImage(document.getElementById("imgMap16"), 0.0, 0.0,
+				1024.0, 1024.0, -112.0 - 1024.0, -212.0, 1024.0, 1024.0);
 
-		gameContext.drawImage(document.getElementById("imgMap18"),
-				0.0, 0.0, 1024.0, 1024.0,
-				-112.0, -212.0 + 512.0, 1024.0, 1024.0);
+		gameContext.drawImage(document.getElementById("imgMap17"), 0.0, 0.0,
+				1024.0, 1024.0, -112.0 - 512.0, -212.0 + 256.0, 1024.0, 1024.0);
+
+		gameContext.drawImage(document.getElementById("imgMap18"), 0.0, 0.0,
+				1024.0, 1024.0, -112.0, -212.0 + 512.0, 1024.0, 1024.0);
 
 		engine.eventBus.fireEvent(new EventMapUpdated());
 

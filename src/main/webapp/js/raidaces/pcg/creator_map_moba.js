@@ -5,8 +5,8 @@ function CreatorMapMoba() {
 	CreatorMap2D.apply(this, []);
 	this.creatorRaiseLowerMap = new CreatorMap2D();
 	this.creatorRaiseLowerMapContext = new CreatorMap2DContext();
-	this.creatorLane = new CreatorMobaLane();
-	this.creatorLaneContext = new CreatorMobaLaneContext();
+//	this.creatorLane = new CreatorMobaLane();
+//	this.creatorLaneContext = new CreatorMobaLaneContext();
 	this.creatorBase = new CreatorMobaBase();
 	this.creatorBaseContext = new CreatorMobaBaseContext();
 }
@@ -69,28 +69,28 @@ CreatorMapMoba.prototype.createCheckedRaiseAndLowerAction = function(doRaise,
 
 CreatorMapMoba.prototype.setMobaAreas = function(streamSource, map, mirrorMode,
 		mirrorLine) {
-
-	var startingPoint = new Object;
-	startingPoint.indexX = streamSource.consumeShort() % (map.width);
-	startingPoint.indexY = streamSource.consumeShort() % (map.height);
-
-	this.creatorLaneContext.setMirrorMode(mirrorMode, mirrorLine);
-	this.creatorLaneContext.map = map;
-	this.creatorLaneContext.startingPoint = startingPoint;
-
-	this.creatorLane.context = this.creatorLaneContext;
-
-	var indexLane;
-	for (indexLane = 0; indexLane < 3; indexLane++) {
-
-		log("Lane number " + (indexLane + 1) + " will be created.");
-
-		var lane = this.creatorLane.create(streamSource);
-		log("Lane created with pointArray size being: "
-				+ lane.pointArray.length);
-		this.helper.addLines(streamSource, lane.pointArray, map, mirrorMode,
-				mirrorLine);
-	}
+//
+//	var startingPoint = new Object;
+//	startingPoint.indexX = streamSource.consumeShort() % (map.width);
+//	startingPoint.indexY = streamSource.consumeShort() % (map.height);
+//
+//	this.creatorLaneContext.setMirrorMode(mirrorMode, mirrorLine);
+//	this.creatorLaneContext.map = map;
+//	this.creatorLaneContext.startingPoint = startingPoint;
+//
+//	this.creatorLane.context = this.creatorLaneContext;
+//
+//	var indexLane;
+//	for (indexLane = 0; indexLane < 3; indexLane++) {
+//
+//		log("Lane number " + (indexLane + 1) + " will be created.");
+//
+//		var lane = this.creatorLane.create(streamSource);
+//		log("Lane created with pointArray size being: "
+//				+ lane.pointArray.length);
+//		this.helper.addLines(streamSource, lane.pointArray, map, mirrorMode,
+//				mirrorLine);
+//	}
 
 	var optionalWidth = streamSource.consumeShort() % 8;
 	var optionalHeight = streamSource.consumeShort() % 8;

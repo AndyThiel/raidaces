@@ -1,5 +1,3 @@
-var EVENTTYPE_GAMESTATE_CHANGED = 1;
-
 //
 // EventGameStateChanged
 //

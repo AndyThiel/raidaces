@@ -1,8 +1,3 @@
-var PROJECTION_TOP = 1;
-var PROJECTION_ISO = 2;
-var PROJECTION_SIDE = 3;
-
-
 //
 // CreatorLandscape2DContext
 //

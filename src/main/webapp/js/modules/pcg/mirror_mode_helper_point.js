@@ -1,5 +1,3 @@
-var MIRRORLINE_DEFAULT = -1;
-
 //
 // MirrorModeHelperPoint
 //

@@ -1,5 +1,3 @@
-var EVENTTYPE_MAP_UPDATED = 2;
-
 //
 // EventMapUpdated
 //
