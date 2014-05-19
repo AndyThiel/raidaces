@@ -1,6 +1,3 @@
-var MIN_SEQUENCE_LENGTH = 40;
-var MAX_SEED_VALUE = 123321;
-
 //
 // StreamSourceFixed
 //

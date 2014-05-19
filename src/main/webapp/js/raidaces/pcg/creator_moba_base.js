@@ -19,7 +19,7 @@ CreatorMobaBase.prototype.create = function(streamSource) {
 
 	var base = new MobaBase(this.context.width, this.context.height);
 
-	var groundHeight = 1 + streamSource.consumeShort() % 3;
+	var groundHeight = 1 + (streamSource.consumeShort() % 3);
 	var baseArray = base.mapArray;
 
 	var indexX;
@@ -27,11 +27,11 @@ CreatorMobaBase.prototype.create = function(streamSource) {
 	for (indexY = 0; indexY < baseArray.length; indexY++) {
 		for (indexX = 0; indexX < baseArray[indexY].length; indexX++) {
 
-//			if (0 == (indexY % 2) && 0 == (indexX % 2)) {
-//				baseArray[indexY][indexX] = groundHeight + 1;
-//			} else {
+			if (0 == (indexY % 2) && 0 == (indexX % 2)) {
+				baseArray[indexY][indexX] = groundHeight + 1;
+			} else {
 				baseArray[indexY][indexX] = groundHeight;
-//			}
+			}
 		}
 	}
 

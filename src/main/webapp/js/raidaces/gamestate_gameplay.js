@@ -1,7 +1,7 @@
 //
-// GameStateLoading
+// GameStateGameplay
 //
-function GameStateLoading(gamestateEngine) {
+function GameStateGameplay(gamestateEngine) {
 
 	AbstractGameState.apply(this, arguments);
 
@@ -9,18 +9,21 @@ function GameStateLoading(gamestateEngine) {
 	this.TILESIZE = 32;
 	this.ACTUALLY_DO_STUFF = true;
 
-	this.factoryMapMoba = new FactoryMapMoba();
-	this.factoryLandscapeMoba = new FactoryLandscapeMoba();
+	this.creatorMap;
+	this.creatorLandscape;
+
+	this.creatorMapContext = new CreatorMapMobaContext();
+	this.creatorLandscapeContext = new CreatorLandscape2DContext();
 }
 
-GameStateLoading.prototype = Object.create(AbstractGameState.prototype);
-GameStateLoading.prototype.constructor = GameStateLoading;
+GameStateGameplay.prototype = Object.create(AbstractGameState.prototype);
+GameStateGameplay.prototype.constructor = GameStateGameplay;
 
 //
 // Methods
 //
 
-GameStateLoading.prototype.init = function() {
+GameStateGameplay.prototype.init = function() {
 
 	if (this.isInitialized) {
 		throw "error_gamestate_loading_already_initialized";
@@ -30,20 +33,54 @@ GameStateLoading.prototype.init = function() {
 	this.initHiddenContentArea(hiddenContentArea);
 	log("finished initializing hidden content area");
 
-	var resourcesModule = this.engine.getModule("resources");
+	var pcgModule = this.engine.getModule("pcg");
 	var sceneModule = this.engine.getModule("scene");
 	log("modules grabbed from engine");
 
-	var map = this.factoryMapMoba.createRandom();
-	log("Map created");
+	// For random content
+	var streamSource = pcgModule.getStreamSourceRandom();
+	// For reproducible content
+	// var streamSource = pcgModule.getStreamSourceFixed(201, 102);
+	log("stream source has been requested");
 
-	var converterMapToCanvas = new ConverterMapToCanvas();
-	// TODO Currently the canvas is displayed to show the map.
-	// Probably we want to store it in an image and reference the resource in a
-	// map entity ... and maybe write a map widget at some point.
-	converterMapToCanvas.renderTo(map, mapCanvas);
+	var creatorThemeWhitelist;
+
+	// Request creators for procedural generation
+	creatorThemeWhitelist = pcgModule.getCreatorThemeWhitelist();
+	log("whitelist creator requested");
+	this.creatorMap = new CreatorMapMoba();
+	log("map creator requested");
+	this.creatorLandscape = pcgModule.getCreatorLandscape2D();
+	log("landscape creator requested");
+
+	var creatorThemeWhitelistContext = new CreatorThemeWhitelistContext();
+	// Register context objects
+	creatorThemeWhitelist.setContext(creatorThemeWhitelistContext);
+	this.creatorMap.setContext(this.creatorMapContext);
+	this.creatorLandscape.setContext(this.creatorLandscapeContext);
+	log("context objects set");
+
+	// Init context objects for desired creation settings
+	creatorThemeWhitelistContext.registerThemes(this.creatorMap.getThemes());
+	this.creatorMapContext.setDimensions(this.MAPSIZE, this.MAPSIZE); // Dimension
+	// in
+	// tiles
+	this.creatorLandscapeContext.setProjectionMode(PROJECTION_ISO);
+	this.creatorLandscapeContext.setTilesize(this.TILESIZE); // Tile size in
+	// pixels
+	this.creatorLandscapeContext.setDimensions(16, 16); // Dimension in tiles
+	log("context settings complete");
 
 	if (this.ACTUALLY_DO_STUFF) {
+
+		// Use the creators to populate more settings in the context objects
+		this.creatorMapContext.setThemeWhitelist(creatorThemeWhitelist
+				.create(streamSource));
+		log("Whitelist created");
+		this.creatorLandscapeContext.setMap(this.creatorMap
+				.create(streamSource));
+		log("Map created");
+
 		var indexMapY;
 		var indexMapX;
 		for (indexMapY = 0; indexMapY < this.MAPSIZE; indexMapY++) {
@@ -137,11 +174,11 @@ GameStateLoading.prototype.init = function() {
 
 	this.isInitialized = true;
 };
-GameStateLoading.prototype.uninit = function() {
+GameStateGameplay.prototype.uninit = function() {
 	this.isInitialized = false;
 };
 
-GameStateLoading.prototype.initHiddenContentArea = function(hiddenContentArea) {
+GameStateGameplay.prototype.initHiddenContentArea = function(hiddenContentArea) {
 
 	// The canvases are used to render the images that are eventually stored in
 	// the images created below.
@@ -196,7 +233,7 @@ GameStateLoading.prototype.initHiddenContentArea = function(hiddenContentArea) {
 	}
 };
 
-GameStateLoading.prototype.landscapeToImages = function(currentLandscape,
+GameStateGameplay.prototype.landscapeToImages = function(currentLandscape,
 		tileSize, indexCurrentLandscape) {
 
 	setTimeout(this.makeRenderExecution(this, currentLandscape,
@@ -212,7 +249,7 @@ GameStateLoading.prototype.landscapeToImages = function(currentLandscape,
 	// document.getElementById('canvasDepthMap').toDataURL();
 };
 
-GameStateLoading.prototype.makeRenderExecution = function(gamestate_loading,
+GameStateGameplay.prototype.makeRenderExecution = function(gamestate_loading,
 		currentLandscape, indexCurrentLandscape, tileSize) {
 
 	return function() {
@@ -237,7 +274,7 @@ GameStateLoading.prototype.makeRenderExecution = function(gamestate_loading,
 	};
 };
 
-GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
+GameStateGameplay.prototype.renderLandscapeMaps = function(currentLandscape,
 		tileSize) {
 
 	var renderGrid = true;
@@ -370,7 +407,7 @@ GameStateLoading.prototype.renderLandscapeMaps = function(currentLandscape,
 	}
 };
 
-GameStateLoading.prototype.getFillStyle = function(tileValue) {
+GameStateGameplay.prototype.getFillStyle = function(tileValue) {
 	if (-2 == tileValue) {
 		return "#7777AA";
 	} else if (-1 == tileValue) {
@@ -392,7 +429,7 @@ GameStateLoading.prototype.getFillStyle = function(tileValue) {
  * information ...
  * 
  */
-GameStateLoading.prototype.landscapeToEntity = function(currentLandscape,
+GameStateGameplay.prototype.landscapeToEntity = function(currentLandscape,
 		tileSize) {
 
 	// ...
@@ -441,4 +478,4 @@ function makeUpdateExecution() {
 		engine.eventBus.fireEvent(new EventMapUpdated());
 
 	};
-};
+}

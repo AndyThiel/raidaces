@@ -25,10 +25,10 @@ Engine.prototype.registerCoreModules = function(gameContext) {
 	// this.registerModule("audio", new ModuleAudio(this.eventBus, this.requestDispatcher));
 	this.registerModule("debug", new ModuleDebug(this.eventBus, this.requestDispatcher));
 	this.registerModule("events", new ModuleEvents(this.eventBus, this.requestDispatcher));
-	// this.registerModule("gui", new ModuleGUI(this.eventBus, this.requestDispatcher));
+	this.registerModule("gui", new ModuleGUI(this.eventBus, this.requestDispatcher));
 	this.registerModule("pcg", new ModulePCG(this.eventBus, this.requestDispatcher));
 	this.registerModule("render", new ModuleRender(this.eventBus, this.requestDispatcher, gameContext));
-	// this.registerModule("resources", new ModuleResources(this.eventBus, this.requestDispatcher));
+	this.registerModule("resources", new ModuleResources(this.eventBus, this.requestDispatcher));
 	this.registerModule("scene", new ModuleScene(this.eventBus, this.requestDispatcher));
 };
 Engine.prototype.registerModule = function(module_id, module) {

@@ -1,7 +1,3 @@
-var MIRRORMODE_RANDOM = -1;
-var MIRRORMODE_POINT = 0;
-var MIRRORMODE_AXIS = 1;
-
 //
 // CreatorMap2D
 //
