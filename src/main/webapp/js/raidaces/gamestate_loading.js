@@ -43,6 +43,8 @@ GameStateLoading.prototype.init = function() {
 	// map entity ... and maybe write a map widget at some point.
 	converterMapToCanvas.renderTo(map, mapCanvas);
 
+	// TODO Continue here ... create landsapes and use resource, scene and pcg
+	// modules (as well as raidaces specific helpers) to render images.
 	if (this.ACTUALLY_DO_STUFF) {
 		var left = this.MAPSIZE / 2 - 8;
 		var top = this.MAPSIZE / 2 - 8;
