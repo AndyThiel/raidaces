@@ -44,48 +44,6 @@ GameStateLoading.prototype.init = function() {
 	converterMapToCanvas.renderTo(map, mapCanvas);
 
 	if (this.ACTUALLY_DO_STUFF) {
-		var indexMapY;
-		var indexMapX;
-		for (indexMapY = 0; indexMapY < this.MAPSIZE; indexMapY++) {
-			for (indexMapX = 0; indexMapX < this.MAPSIZE; indexMapX++) {
-
-				mapContext.lineWidth = 1;
-				mapContext.beginPath();
-				mapContext.rect(indexMapX, indexMapY, 1, 1);
-
-				var left = this.MAPSIZE / 2 - 8;
-				var right = this.MAPSIZE / 2 + 8;
-				var top = this.MAPSIZE / 2 - 8;
-				var bottom = this.MAPSIZE / 2 + 8;
-
-				if ((indexMapY >= top && indexMapY <= bottom && (top == indexMapX || bottom == indexMapX))
-						|| (indexMapX >= left && indexMapX <= right && (left == indexMapY || right == indexMapY))) {
-					mapContext.strokeStyle = "#FFFFFF";
-				} else {
-					if (typeof this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX] === 'undefined') {
-						log("undefined at: " + indexMapX + "/" + indexMapY);
-						mapContext.strokeStyle = "#FF00FF";
-					} else if (0 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
-						mapContext.strokeStyle = "#7777AA";
-					} else if (1 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
-						mapContext.strokeStyle = "#77AA77";
-					} else if (2 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
-						mapContext.strokeStyle = "#88BB88";
-					} else if (3 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
-						mapContext.strokeStyle = "#99CC99";
-					} else if (4 == this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]) {
-						mapContext.strokeStyle = "#AADDAA";
-					} else {
-						log("unsupported ("
-								+ this.creatorLandscapeContext.map.mapArray[indexMapY][indexMapX]
-								+ ") at: " + indexMapX + "/" + indexMapY);
-						mapContext.strokeStyle = "#00FF00";
-					}
-				}
-				mapContext.stroke();
-			}
-		}
-
 		var left = this.MAPSIZE / 2 - 8;
 		var top = this.MAPSIZE / 2 - 8;
 
